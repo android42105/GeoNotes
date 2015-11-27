@@ -2,14 +2,17 @@ package albsig.geonotes;
 
 
 import android.app.Service;
+import android.content.Intent;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
@@ -39,6 +42,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Button buttonTrack;
     private ProgressBar progressBar;
 
+    //variables for swiping
+    private float x1, x2;
+    private DisplayMetrics metrics;
+    private int MIN_DISTANCE;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,6 +67,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         this.buttonTrack = (Button) findViewById(R.id.buttonTrack);
         this.progressBar = (ProgressBar) findViewById(R.id.progressBar);
         this.progressBar.setVisibility(View.GONE);
+
+        //display info
+        this.metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        this.MIN_DISTANCE = metrics.widthPixels / 3;
     }
 
 
@@ -98,9 +111,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public void onLocationChanged(Location location) {
-        currentLocation = location;
-        map.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude())));
-        map.setMyLocationEnabled(true);
+        this.currentLocation = location;
+        this.map.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude())));
+        this.map.setMyLocationEnabled(true);
     }
 
     @Override
@@ -140,9 +153,35 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-    public void stopLocationUpdates() {
+
+    private void stopLocationUpdates() {
         //noinspection ResourceType
         locationManager.removeUpdates(this);
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+
+        switch (event.getAction()) {
+
+            case MotionEvent.ACTION_DOWN:
+                x1 = event.getX();
+                break;
+            case MotionEvent.ACTION_UP:
+                x2 = event.getX();
+                float deltaX = x1 - x2;
+                if (deltaX > MIN_DISTANCE) {
+                    swipeRight2Left();
+                }
+                break;
+        }
+        return super.onTouchEvent(event);
+    }
+
+    private void swipeRight2Left() {
+        Intent intent = new Intent(this, dbActivity.class);
+        startActivity(intent);
+        overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
     }
 
 }
