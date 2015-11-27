@@ -3,6 +3,7 @@
     <string name="title_activity_maps">Map</string>
     <string name="title_activity_main">GeoNotes</string>
     <string name="track_start">track me</string>
+    <string name="track_stop">stop</string>
     
     <string name="action_settings">Settings</string>
 </resources>

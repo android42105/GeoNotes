@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -25,11 +26,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 3000;
     private static final float UPATE_DISTANCE_IN_METERS = 5;
 
+    //variable to check if activity is currently tracking.
+    private boolean isTracking = false;
+
     private GoogleMap map;
 
     private LocationManager locationManager;
     private Location currentLocation;
 
+    private Button buttonTrack;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +51,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         // get the GoogleMap Object.
         map = mapFragment.getMap();
+
+        buttonTrack = (Button) findViewById(R.id.buttonTrack);
     }
 
 
@@ -111,11 +118,20 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
      */
     @SuppressWarnings("ResourceType")
     public void startTracking(View v) {
-        Toast.makeText(this, "locating Position, please wait...", Toast.LENGTH_LONG).show();
-        String provider = locationManager.getBestProvider(new Criteria(), true);
-        this.locationManager.requestLocationUpdates(provider,
-                UPDATE_INTERVAL_IN_MILLISECONDS,
-                UPATE_DISTANCE_IN_METERS, this);
+        if (!isTracking) {
+            Toast.makeText(this, "locating Position, please wait...", Toast.LENGTH_LONG).show();
+            String provider = locationManager.getBestProvider(new Criteria(), true);
+            this.locationManager.requestLocationUpdates(provider,
+                    UPDATE_INTERVAL_IN_MILLISECONDS,
+                    UPATE_DISTANCE_IN_METERS, this);
+            buttonTrack.setText(R.string.track_stop);
+            this.isTracking = true;
+        } else if (isTracking) {
+            Toast.makeText(this, "locating stopped", Toast.LENGTH_LONG).show();
+            stopLocationUpdates();
+            buttonTrack.setText(R.string.track_start);
+            this.isTracking = false;
+        }
     }
 
     public void stopLocationUpdates() {
