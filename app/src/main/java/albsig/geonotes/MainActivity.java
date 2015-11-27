@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -34,7 +35,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private LocationManager locationManager;
     private Location currentLocation;
 
+    //Elements in UserInterface
     private Button buttonTrack;
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,9 +53,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mapFragment.getMapAsync(this);
 
         // get the GoogleMap Object.
-        map = mapFragment.getMap();
+        this.map = mapFragment.getMap();
 
-        buttonTrack = (Button) findViewById(R.id.buttonTrack);
+        //init the UI elements
+        this.buttonTrack = (Button) findViewById(R.id.buttonTrack);
+        this.progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        this.progressBar.setVisibility(View.GONE);
     }
 
 
@@ -121,16 +127,16 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (!isTracking) {
             Toast.makeText(this, "locating Position, please wait...", Toast.LENGTH_LONG).show();
             String provider = locationManager.getBestProvider(new Criteria(), true);
-            this.locationManager.requestLocationUpdates(provider,
-                    UPDATE_INTERVAL_IN_MILLISECONDS,
-                    UPATE_DISTANCE_IN_METERS, this);
-            buttonTrack.setText(R.string.track_stop);
+            this.locationManager.requestLocationUpdates(provider, UPDATE_INTERVAL_IN_MILLISECONDS, UPATE_DISTANCE_IN_METERS, this);
+            this.buttonTrack.setText(R.string.track_stop);
             this.isTracking = true;
+            this.progressBar.setVisibility(View.VISIBLE);
         } else if (isTracking) {
             Toast.makeText(this, "locating stopped", Toast.LENGTH_LONG).show();
-            stopLocationUpdates();
-            buttonTrack.setText(R.string.track_start);
+            this.buttonTrack.setText(R.string.track_start);
             this.isTracking = false;
+            this.progressBar.setVisibility(View.GONE);
+            stopLocationUpdates();
         }
     }
 
