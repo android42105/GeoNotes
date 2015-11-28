@@ -2,7 +2,9 @@ package albsig.geonotes;
 
 
 import android.app.Service;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -25,6 +27,8 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import static albsig.geonotes.DatabaseContract.*;
+
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, LocationListener {
 
     private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 3000;
@@ -37,6 +41,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private LocationManager locationManager;
     private Location currentLocation;
+
+    private DatabaseHelper dbhelper;
+    private SQLiteDatabase dbase;
 
     //Elements in UserInterface
     private Button buttonTrack;
@@ -85,16 +92,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -182,6 +184,25 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         Intent intent = new Intent(this, dbActivity.class);
         startActivity(intent);
         overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
+    }
+
+    public void saveCurrentPosition(View v) {
+
+
+        this.dbhelper = new DatabaseHelper(this);
+        this.dbase = dbhelper.getWritableDatabase();
+
+        //für testzwecke wird die table immer neu erstellt.
+        // dbase.execSQL("DROP TABLE IF EXISTS " + FeedEntry.TABLE_NAME);
+        //dbhelper.onCreate(dbase);
+
+        ContentValues values = new ContentValues();
+        values.put(FeedEntry.COLUMN_NAME_TITLE, "title test");
+        values.put(FeedEntry.COLUMN_NAME_NOTE, "note test");
+        values.put(FeedEntry.COLUMN_NAME_LOCATION, "location test");
+
+        //insert can return long, which is the primary key.
+        dbase.insert(FeedEntry.TABLE_NAME, "null", values);
     }
 
 }

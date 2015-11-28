@@ -1,12 +1,17 @@
 package albsig.geonotes;
 
-import android.app.ActionBar;
+
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+
+import static albsig.geonotes.DatabaseContract.*;
 
 public class dbActivity extends AppCompatActivity {
 
@@ -15,10 +20,19 @@ public class dbActivity extends AppCompatActivity {
     private DisplayMetrics metrics;
     private int MIN_DISTANCE;
 
+    private DatabaseHelper dbhelper;
+    private SQLiteDatabase dbase;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_db);
+
+        this.dbhelper = new DatabaseHelper(this);
+        this.dbase = dbhelper.getReadableDatabase();
+
+        readFromDatabase();
+
     }
 
     @Override
@@ -72,6 +86,30 @@ public class dbActivity extends AppCompatActivity {
 
     private void swipeLeft2Right() {
         onBackPressed();
+    }
+
+    private void readFromDatabase() {
+
+        String[] projections = {
+                FeedEntry._ID,
+                FeedEntry.COLUMN_NAME_TITLE,
+                FeedEntry.COLUMN_NAME_NOTE,
+                FeedEntry.COLUMN_NAME_LOCATION
+        };
+
+
+        Cursor c = dbase.query(
+                FeedEntry.TABLE_NAME, //table to query
+                projections,          //columns to return
+                null,
+                null,
+                null,
+                null,
+                null
+
+        );
+        c.moveToLast();
+        Log.d("DB ACTIVITY", c.getPosition()+"");
     }
 
 }
