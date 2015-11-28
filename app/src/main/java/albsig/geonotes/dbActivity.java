@@ -23,8 +23,11 @@ public class dbActivity extends AppCompatActivity {
     private DisplayMetrics metrics;
     private int MIN_DISTANCE;
 
+    //Databse variables
     private DatabaseHelper dbhelper;
     private SQLiteDatabase dbase;
+
+    private ScrollView sv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +37,7 @@ public class dbActivity extends AppCompatActivity {
         this.dbhelper = new DatabaseHelper(this);
         this.dbase = dbhelper.getReadableDatabase();
 
+        this.sv = (ScrollView) findViewById(R.id.scrollView);
         readFromDatabase();
 
     }
@@ -68,32 +72,12 @@ public class dbActivity extends AppCompatActivity {
     }
 
 
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-
-        switch (event.getAction()) {
-
-            case MotionEvent.ACTION_DOWN:
-                x1 = event.getX();
-                break;
-            case MotionEvent.ACTION_UP:
-                x2 = event.getX();
-                float deltaX = x2 - x1;
-                if (deltaX > MIN_DISTANCE) {
-                    swipeLeft2Right();
-                }
-                break;
-        }
-        return super.onTouchEvent(event);
-    }
-
     private void swipeLeft2Right() {
         onBackPressed();
     }
 
     private void readFromDatabase() {
 
-        ScrollView sv = (ScrollView) findViewById(R.id.scrollView);
         LinearLayout ll = new LinearLayout(this);
         ll.setOrientation(LinearLayout.VERTICAL);
 
@@ -111,7 +95,7 @@ public class dbActivity extends AppCompatActivity {
             bra.setText(c.getPosition() + "das ist aus der datenbank");
             ll.addView(bra);
         }
-        sv.addView(ll);
+        this.sv.addView(ll);
         c.moveToLast();
         Log.d("DB ACTIVITY", c.getPosition() + " ");
         int n = c.getPosition();

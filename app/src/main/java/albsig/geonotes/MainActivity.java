@@ -1,6 +1,7 @@
 package albsig.geonotes;
 
 
+
 import android.app.Service;
 import android.content.ContentValues;
 import android.content.Intent;
@@ -9,6 +10,7 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -28,6 +30,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import static albsig.geonotes.DatabaseContract.*;
+
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, LocationListener {
 
@@ -188,6 +191,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     public void saveCurrentPosition(View v) {
 
+        AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
+        builder1.setView(R.layout.dialog_save);
+        AlertDialog a1 = builder1.create();
+        a1.show();
 
         this.dbhelper = new DatabaseHelper(this);
         this.dbase = dbhelper.getWritableDatabase();
