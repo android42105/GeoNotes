@@ -64,7 +64,7 @@ public class dbActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        overridePendingTransition(R.anim.push_out_right, R.anim.pull_in_left);
+        overridePendingTransition(R.anim.pull_in_left, R.anim.push_out_right);
     }
 
 
