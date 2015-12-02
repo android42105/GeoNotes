@@ -6,10 +6,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -95,7 +93,9 @@ public class DBActivity extends AppCompatActivity {
             String title = c.getString(1);
             String note = c.getString(2);
             bra.setText("ID: " + id + "\nTitle: " + title + "\nNote: " + note);
+            bra.setBackgroundResource(R.drawable.db_textview_shape);
             ll.addView(bra);
+
         }
         this.sv.addView(ll);
     }
