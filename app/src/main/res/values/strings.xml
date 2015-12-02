@@ -4,9 +4,7 @@
     <string name="title_activity_main">GeoNotes</string>
     <string name="track_start">track me</string>
     <string name="track_stop">stop</string>
-    
-    <string name="action_settings">Settings</string>
-    <string name="title_activity_db">dbActivity</string>
 
-    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_db">Saved Locations</string>
 </resources>
