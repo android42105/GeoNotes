@@ -87,20 +87,17 @@ public class DBActivity extends AppCompatActivity {
 
         Cursor c = dbase.query(
                 FeedEntry.TABLE_NAME, projections, null, null, null, null, null);
-
+        c.moveToFirst();
         boolean goon = true;
-        while (goon) {
-            goon = c.moveToNext();
+        while (c.moveToNext()) {
             TextView bra = new TextView(this);
-            bra.setText(c.getPosition() + "das ist aus der datenbank");
+            int id = c.getInt(0);
+            String title = c.getString(1);
+            String note = c.getString(2);
+            bra.setText("ID: " + id + "\nTitle: " + title + "\nNote: " + note);
             ll.addView(bra);
         }
         this.sv.addView(ll);
-        c.moveToLast();
-        Log.d("DB ACTIVITY", c.getPosition() + " ");
-        int n = c.getPosition();
-
-
     }
 
 }
