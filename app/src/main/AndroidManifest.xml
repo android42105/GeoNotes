@@ -35,7 +35,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".dbActivityTest"
+            android:name=".DBActivity"
             android:label="@string/title_activity_db"
             android:parentActivityName=".MainActivity" >
             <meta-data
