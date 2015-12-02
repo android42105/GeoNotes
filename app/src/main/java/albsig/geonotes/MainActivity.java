@@ -1,7 +1,6 @@
 package albsig.geonotes;
 
 
-
 import android.app.Service;
 import android.content.ContentValues;
 import android.content.Intent;
@@ -189,13 +188,33 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
     }
 
-    public void saveCurrentPosition(View v) {
+    public void openSaveDialog(View v) {
 
-        AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
-        builder1.setView(R.layout.dialog_save);
-        AlertDialog a1 = builder1.create();
-        a1.show();
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        dialogBuilder.setView(R.layout.dialog_save);
+        final AlertDialog dialog = dialogBuilder.create();
+        dialog.show();
 
+        final Button dialogCancelButton = (Button) dialog.findViewById(R.id.dialogCancel);
+
+        final Button dialogSaveButton = (Button) dialog.findViewById(R.id.dialogSave);
+
+        dialogCancelButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                dialog.cancel();
+            }
+        });
+
+        dialogSaveButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                dialog.cancel();
+                saveCurrentPosition();
+            }
+        });
+    }
+
+    //saving position could be async as it takes a couple of seconds...
+    public void saveCurrentPosition() {
         this.dbhelper = new DatabaseHelper(this);
         this.dbase = dbhelper.getWritableDatabase();
 
@@ -211,6 +230,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         //insert can return long, which is the primary key.
         dbase.insert(FeedEntry.TABLE_NAME, "null", values);
     }
+
 
 }
 
