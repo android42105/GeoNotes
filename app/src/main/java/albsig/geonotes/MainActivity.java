@@ -13,11 +13,13 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -198,6 +200,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         final Button dialogCancelButton = (Button) dialog.findViewById(R.id.dialogCancel);
         final Button dialogSaveButton = (Button) dialog.findViewById(R.id.dialogSave);
+        final EditText dialogTitle = (EditText) dialog.findViewById(R.id.dialogTitle);
+        final EditText dialogNote = (EditText) dialog.findViewById(R.id.dialogNote);
 
         dialogCancelButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -208,13 +212,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         dialogSaveButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 dialog.cancel();
-                saveCurrentPosition();
+                String title = dialogTitle.getText().toString();
+                String note = dialogNote.getText().toString();
+                saveCurrentPosition(title, note);
             }
         });
     }
 
     //saving position could be async as it takes a couple of seconds...
-    public void saveCurrentPosition() {
+    public void saveCurrentPosition(String title, String note) {
         this.dbhelper = new DatabaseHelper(this);
         this.dbase = dbhelper.getWritableDatabase();
 
@@ -223,8 +229,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         //dbhelper.onCreate(dbase);
 
         ContentValues values = new ContentValues();
-        values.put(FeedEntry.COLUMN_NAME_TITLE, "title test");
-        values.put(FeedEntry.COLUMN_NAME_NOTE, "note test");
+        values.put(FeedEntry.COLUMN_NAME_TITLE, title);
+        values.put(FeedEntry.COLUMN_NAME_NOTE, note);
         values.put(FeedEntry.COLUMN_NAME_LOCATION, "location test");
 
         //insert can return long, which is the primary key.

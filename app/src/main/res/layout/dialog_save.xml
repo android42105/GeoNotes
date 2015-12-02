@@ -4,7 +4,7 @@
     android:orientation="vertical">
 
     <EditText
-        android:id="@+id/username"
+        android:id="@+id/dialogTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_column="0"
@@ -14,11 +14,10 @@
         android:layout_marginRight="4dp"
         android:layout_marginTop="16dp"
         android:layout_row="1"
-        android:hint="Title"
-        android:inputType="textEmailAddress" />
+        android:hint="Title" />
 
     <EditText
-        android:id="@+id/password"
+        android:id="@+id/dialogNote"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_column="0"
@@ -41,10 +40,10 @@
 
     <Button
         android:id="@+id/dialogSave"
-        android:layout_gravity="right"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_column="1"
+        android:layout_gravity="right"
         android:layout_row="3"
         android:text="Save" />
 
