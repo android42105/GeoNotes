@@ -193,10 +193,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         dialogBuilder.setView(R.layout.dialog_save);
         final AlertDialog dialog = dialogBuilder.create();
+        dialog.setCanceledOnTouchOutside(false);
         dialog.show();
 
         final Button dialogCancelButton = (Button) dialog.findViewById(R.id.dialogCancel);
-
         final Button dialogSaveButton = (Button) dialog.findViewById(R.id.dialogSave);
 
         dialogCancelButton.setOnClickListener(new View.OnClickListener() {
