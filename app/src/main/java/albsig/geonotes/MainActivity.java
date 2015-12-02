@@ -184,7 +184,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private void swipeRight2Left() {
-        Intent intent = new Intent(this, dbActivity.class);
+        Intent intent = new Intent(this, dbActivityTest.class);
         startActivity(intent);
         overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
     }

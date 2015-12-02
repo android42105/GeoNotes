@@ -16,7 +16,7 @@ import android.widget.TextView;
 
 import static albsig.geonotes.DatabaseContract.*;
 
-public class dbActivity extends AppCompatActivity {
+public class dbActivityTest extends AppCompatActivity {
 
     //variables for swiping
     private float x1, x2;
