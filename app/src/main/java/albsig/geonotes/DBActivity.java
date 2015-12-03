@@ -8,9 +8,11 @@ import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import static albsig.geonotes.DatabaseContract.*;
 
@@ -76,7 +78,7 @@ public class DBActivity extends AppCompatActivity {
 
     private void readFromDatabase() {
 
-        LinearLayout ll = new LinearLayout(this);
+        final LinearLayout ll = new LinearLayout(this);
         ll.setOrientation(LinearLayout.VERTICAL);
 
         String[] projections = {FeedEntry._ID, FeedEntry.COLUMN_NAME_TITLE, FeedEntry.COLUMN_NAME_NOTE,
@@ -88,14 +90,22 @@ public class DBActivity extends AppCompatActivity {
         c.moveToFirst();
         boolean goon = true;
         while (c.moveToNext()) {
-            TextView bra = new TextView(this);
+            final String[] strA = new String[2];
+            final TextView bra = new TextView(this);
             int id = c.getInt(0);
-            String title = c.getString(1);
-            String note = c.getString(2);
-            bra.setText("ID: " + id + "\nTitle: " + title + "\nNote: " + note);
+            strA[0] = c.getString(1);
+            strA[1] = c.getString(2);
+            bra.setText("ID: " + id + "\n Title: " + strA[0] + "  Node: " + strA[1]);
             bra.setBackgroundResource(R.drawable.db_textview_shape);
-            ll.addView(bra);
 
+            bra.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                }
+            });
+
+            ll.addView(bra);
         }
         this.sv.addView(ll);
     }
