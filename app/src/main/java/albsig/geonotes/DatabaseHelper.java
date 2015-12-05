@@ -16,16 +16,23 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
     //SQL statements
-    private final String SQL_CREATE_ENTRIES = "CREATE TABLE " +
+    private final String SQL_CREATE_LOCATION = "CREATE TABLE " +
             FeedEntry.TABLE_NAME + " (" +
             FeedEntry._ID + " INTEGER PRIMARY KEY," +
             FeedEntry.COLUMN_NAME_TITLE + " TEXT," +
             FeedEntry.COLUMN_NAME_NOTE + " TEXT," +
-            FeedEntry.COLUMN_NAME_LOCATION + " TEXT" +
-            " );";
+            FeedEntry.COLUMN_NAME_LONGITUDE + " TEXT," +
+            FeedEntry.COLUMN_NAME_LATITUDE + " TEXT," +
+            FeedEntry.COLUMN_NAME_FILTER + " INTEGER " +
+            " FOREIGN KEY (" + FeedEntry.COLUMN_NAME_FILTER + ") REFERENCES " + FeedEntry.TABLE_NAME2 + " (" + FeedEntry._ID + "));";
 
+    private final String SQL_CREATE_FILTER = "CREATE TABLE " +
+            FeedEntry.TABLE_NAME2 + " (" +
+            FeedEntry._ID + " INTEGER PRIMARY KEY," +
+            FeedEntry.COLUMN_NAME_DESCRIPTION + " TEXT );";
 
-    private final String SQL_DELETE_TABLE = "DROP TABLE IF EXISTS " + FeedEntry.TABLE_NAME;
+    private final String SQL_DELETE_TABLE_LOCATION = "DROP TABLE IF EXISTS " + FeedEntry.TABLE_NAME;
+    private final String SQL_DELETE_TABLE_FILTER = "DROP TABLE IF EXISTS " + FeedEntry.TABLE_NAME2;
 
 
     public DatabaseHelper(Context context) {
@@ -35,13 +42,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         Log.d("IN DATABASEHELPER", " onCREATE HAS BEEN CALLED");
-        db.execSQL(SQL_CREATE_ENTRIES);
+        db.execSQL(SQL_CREATE_LOCATION);
+        db.execSQL(SQL_CREATE_FILTER);
     }
 
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL(SQL_DELETE_TABLE);
+        db.execSQL(SQL_DELETE_TABLE_LOCATION);
+        db.execSQL(SQL_DELETE_TABLE_FILTER);
         onCreate(db);
     }
 }

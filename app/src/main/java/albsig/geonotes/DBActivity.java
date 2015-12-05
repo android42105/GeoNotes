@@ -80,7 +80,7 @@ public class DBActivity extends AppCompatActivity {
         ll.setOrientation(LinearLayout.VERTICAL);
 
         String[] projections = {FeedEntry._ID, FeedEntry.COLUMN_NAME_TITLE, FeedEntry.COLUMN_NAME_NOTE,
-                FeedEntry.COLUMN_NAME_LOCATION
+                FeedEntry.COLUMN_NAME_LONGITUDE, FeedEntry.COLUMN_NAME_LATITUDE
         };
 
         Cursor c = dbase.query(

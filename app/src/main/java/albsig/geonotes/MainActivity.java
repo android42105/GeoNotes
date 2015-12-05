@@ -32,6 +32,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import static albsig.geonotes.DatabaseContract.*;
 
+import albsig.geonotes.dbModels.*;
+
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, LocationListener {
 
@@ -214,13 +216,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 dialog.cancel();
                 String title = dialogTitle.getText().toString();
                 String note = dialogNote.getText().toString();
-                saveCurrentPosition(title, note);
+               // saveCurrentPosition(title, note, );
             }
         });
     }
 
     //saving position could be async as it takes a couple of seconds...
-    public void saveCurrentPosition(String title, String note) {
+    public void saveCurrentPosition(String title, String note, String longitude, String latitude, Filter filter) {
         this.dbhelper = new DatabaseHelper(this);
         this.dbase = dbhelper.getWritableDatabase();
 
@@ -231,7 +233,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         ContentValues values = new ContentValues();
         values.put(FeedEntry.COLUMN_NAME_TITLE, title);
         values.put(FeedEntry.COLUMN_NAME_NOTE, note);
-        values.put(FeedEntry.COLUMN_NAME_LOCATION, "location test");
+        values.put(FeedEntry.COLUMN_NAME_LONGITUDE, longitude);
+        values.put(FeedEntry.COLUMN_NAME_LATITUDE, latitude);
+        values.put(FeedEntry.COLUMN_NAME_FILTER, filter.getId());
 
         //insert can return long, which is the primary key.
         dbase.insert(FeedEntry.TABLE_NAME, "null", values);
