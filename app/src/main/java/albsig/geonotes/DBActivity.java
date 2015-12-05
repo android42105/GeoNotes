@@ -141,10 +141,17 @@ public class DBActivity extends AppCompatActivity {
                             DBActivity.this.dbhelper = new DatabaseHelper(DBActivity.this);
                             DBActivity.this.dbase = dbhelper.getWritableDatabase();
 
+                            String longitude = "999.99";
+                            String latitude = "888.88";
+                            int filter = 5;
+
                             ContentValues values = new ContentValues();
                             values.put(FeedEntry.COLUMN_NAME_TITLE, title);
                             values.put(FeedEntry.COLUMN_NAME_NOTE, note);
-                            values.put(FeedEntry.COLUMN_NAME_LOCATION, "location test");
+                            values.put(FeedEntry.COLUMN_NAME_LONGITUDE, longitude);
+                            values.put(FeedEntry.COLUMN_NAME_LATITUDE, latitude);
+                            values.put(FeedEntry.COLUMN_NAME_FILTER, filter);
+
 
                             //TODO Update in Database
                         }

@@ -215,7 +215,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 dialog.cancel();
                 String title = dialogTitle.getText().toString();
                 String note = dialogNote.getText().toString();
-               // saveCurrentPosition(title, note, );
+                saveCurrentPosition(title, note, "88", "99", new Filter(10, "TEST") );
             }
         });
     }
