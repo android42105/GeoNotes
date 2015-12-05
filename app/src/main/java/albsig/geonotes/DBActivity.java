@@ -91,7 +91,7 @@ public class DBActivity extends AppCompatActivity {
         ll.setOrientation(LinearLayout.VERTICAL);
 
         String[] projections = {FeedEntry._ID, FeedEntry.COLUMN_NAME_TITLE, FeedEntry.COLUMN_NAME_NOTE,
-                FeedEntry.COLUMN_NAME_LONGITUDE, FeedEntry.COLUMN_NAME_LATITUDE
+                FeedEntry.COLUMN_NAME_LONGITUDE, FeedEntry.COLUMN_NAME_LATITUDE, FeedEntry.COLUMN_NAME_FILTER
         };
 
         Cursor c = dbase.query(
@@ -103,8 +103,11 @@ public class DBActivity extends AppCompatActivity {
             final int id = c.getInt(0);
             final String title = c.getString(1);
             final String note = c.getString(2);
+            final String longitude = c.getString(3);
+            final String latitude = c.getString(4);
+            final int filter = c.getInt(5);
 
-            bra.setText("Title\n" + title + "\n\nNote\n" + note);
+            bra.setText("Title\n" + title + "\n\nNote\n" + note + "\n\nLongitude\n" + longitude + "\n\nLatitude\n" + latitude + "\n\nFilter\n" + filter);
             bra.setBackgroundResource(R.drawable.db_textview_shape);
 
             bra.setOnClickListener(new View.OnClickListener() {
