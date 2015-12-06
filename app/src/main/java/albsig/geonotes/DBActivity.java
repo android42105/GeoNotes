@@ -164,7 +164,7 @@ public class DBActivity extends AppCompatActivity {
                 }
             });
 
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(new AbsListView.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(new AbsListView.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
             params.setMargins(10, 10, 10, 10);
             bra.setLayoutParams(params);
             ll.addView(bra);
