@@ -15,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
 import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -107,9 +108,9 @@ public class DBActivity extends AppCompatActivity {
             bra.setText("Title\n" + title + "\n\nNote\n" + note);
             bra.setBackgroundResource(R.drawable.db_textview_shape);
 
-            bra.setOnClickListener(new View.OnClickListener() {
+            bra.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
-                public void onClick(View v) {
+                public boolean onLongClick(View v) {
                     AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(DBActivity.this);
                     dialogBuilder.setView(R.layout.dialog_edit);
                     final AlertDialog dialog = dialogBuilder.create();
@@ -161,6 +162,14 @@ public class DBActivity extends AppCompatActivity {
                             //TODO Show on Map Button functionality
                         }
                     });
+                    return false;
+                }
+            });
+
+            bra.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    bra.startAnimation(AnimationUtils.loadAnimation(DBActivity.this,android.R.anim.fade_out));
                 }
             });
 
