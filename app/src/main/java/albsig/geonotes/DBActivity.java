@@ -4,22 +4,18 @@ package albsig.geonotes;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Typeface;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.SpannableString;
-import android.text.style.StyleSpan;
+import android.text.Html;
 import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.GridLayout;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -99,13 +95,13 @@ public class DBActivity extends AppCompatActivity {
                 FeedEntry.TABLE_NAME, projections, null, null, null, null, null);
         boolean goon = true;
         while (c.moveToNext()) {
-            final TextView bra = new TextView(this);
 
+            final TextView bra = new TextView(this);
             final int id = c.getInt(0);
             final String title = c.getString(1);
             final String note = c.getString(2);
 
-            bra.setText("Title\n" + title + "\n\nNote\n" + note);
+            bra.setText(Html.fromHtml("<b><u>" + title + "</u></b><br/><br/>" + "<i>" + note + "</i>"));
             bra.setBackgroundResource(R.drawable.db_textview_shape);
 
             bra.setOnLongClickListener(new View.OnLongClickListener() {
@@ -169,7 +165,7 @@ public class DBActivity extends AppCompatActivity {
             bra.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    bra.startAnimation(AnimationUtils.loadAnimation(DBActivity.this,android.R.anim.fade_out));
+                    bra.startAnimation(AnimationUtils.loadAnimation(DBActivity.this, android.R.anim.fade_out));
                 }
             });
 
