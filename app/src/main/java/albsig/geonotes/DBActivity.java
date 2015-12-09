@@ -83,17 +83,16 @@ public class DBActivity extends AppCompatActivity {
         final LinearLayout ll = new LinearLayout(this);
         ll.setOrientation(LinearLayout.VERTICAL);
 
-        String[] projections = {FeedEntry._ID, FeedEntry.COLUMN_NAME_TITLE, FeedEntry.COLUMN_NAME_NOTE,
+        final String[] projections = {FeedEntry._ID, FeedEntry.COLUMN_NAME_TITLE, FeedEntry.COLUMN_NAME_NOTE,
                 FeedEntry.COLUMN_NAME_LOCATION
         };
 
         Cursor c = dbase.query(
                 FeedEntry.TABLE_NAME, projections, null, null, null, null, null);
-        boolean goon = true;
+
         while (c.moveToNext()) {
 
             final TextView bra = new TextView(this);
-            final int id = c.getInt(0);
             final String title = c.getString(1);
             final String note = c.getString(2);
 
