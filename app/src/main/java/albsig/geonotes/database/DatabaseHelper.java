@@ -1,4 +1,4 @@
-package albsig.geonotes;
+package albsig.geonotes.database;
 
 
 import android.content.Context;
@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import static albsig.geonotes.DatabaseContract.*;
+import static albsig.geonotes.database.DatabaseContract.*;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 

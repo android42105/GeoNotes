@@ -26,7 +26,7 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".MainActivity"
+            android:name=".activity.MainActivity"
             android:label="@string/title_activity_main" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -35,12 +35,12 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".DBActivity"
+            android:name=".activity.DBActivity"
             android:label="@string/title_activity_db"
-            android:parentActivityName=".MainActivity" >
+            android:parentActivityName=".activity.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="albsig.geonotes.MainActivity" />
+                android:value=".activity.MainActivity" />
         </activity>
     </application>
 

@@ -1,4 +1,4 @@
-package albsig.geonotes;
+package albsig.geonotes.database;
 
 
 import android.provider.BaseColumns;

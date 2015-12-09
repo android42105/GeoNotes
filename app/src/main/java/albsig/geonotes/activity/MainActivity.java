@@ -1,4 +1,4 @@
-package albsig.geonotes;
+package albsig.geonotes.activity;
 
 
 import android.app.Service;
@@ -29,7 +29,11 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import static albsig.geonotes.DatabaseContract.*;
+import albsig.geonotes.R;
+import albsig.geonotes.activity.DBActivity;
+import albsig.geonotes.database.DatabaseHelper;
+
+import static albsig.geonotes.database.DatabaseContract.*;
 
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, LocationListener {

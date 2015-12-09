@@ -1,4 +1,4 @@
-package albsig.geonotes;
+package albsig.geonotes.activity;
 
 
 import android.content.ContentValues;
@@ -19,7 +19,10 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import static albsig.geonotes.DatabaseContract.*;
+import albsig.geonotes.R;
+import albsig.geonotes.database.DatabaseHelper;
+
+import static albsig.geonotes.database.DatabaseContract.*;
 
 public class DBActivity extends AppCompatActivity {
 
