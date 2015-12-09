@@ -2,14 +2,12 @@ package albsig.geonotes.activity;
 
 
 import android.app.Service;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -18,7 +16,6 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -30,10 +27,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import albsig.geonotes.R;
-import albsig.geonotes.activity.DBActivity;
 import albsig.geonotes.database.DatabaseHelper;
-
-import static albsig.geonotes.database.DatabaseContract.*;
+import albsig.geonotes.dialogs.DialogSave;
 
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, LocationListener {
@@ -49,8 +44,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private LocationManager locationManager;
     private Location currentLocation;
 
-    private DatabaseHelper dbhelper;
-    private SQLiteDatabase dbase;
 
     //Elements in UserInterface
     private Button buttonTrack;
@@ -194,52 +187,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     public void openSaveDialog(View v) {
-
-        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
-        dialogBuilder.setView(R.layout.dialog_save);
-        final AlertDialog dialog = dialogBuilder.create();
-        dialog.setCanceledOnTouchOutside(false);
-        dialog.show();
-
-        final Button dialogCancelButton = (Button) dialog.findViewById(R.id.dialogCancel);
-        final Button dialogSaveButton = (Button) dialog.findViewById(R.id.dialogSave);
-        final EditText dialogTitle = (EditText) dialog.findViewById(R.id.dialogTitle);
-        final EditText dialogNote = (EditText) dialog.findViewById(R.id.dialogNote);
-
-        dialogCancelButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                dialog.cancel();
-            }
-        });
-
-        dialogSaveButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                dialog.cancel();
-                String title = dialogTitle.getText().toString();
-                String note = dialogNote.getText().toString();
-                saveCurrentPosition(title, note);
-            }
-        });
+        DialogSave dsave = new DialogSave(this, currentLocation);
+        dsave.show();
     }
-
-    //saving position could be async as it takes a couple of seconds...
-    public void saveCurrentPosition(String title, String note) {
-        this.dbhelper = new DatabaseHelper(this);
-        this.dbase = dbhelper.getWritableDatabase();
-
-        //für testzwecke wird die table immer neu erstellt.
-        // dbase.execSQL("DROP TABLE IF EXISTS " + FeedEntry.TABLE_NAME);
-        //dbhelper.onCreate(dbase);
-
-        ContentValues values = new ContentValues();
-        values.put(FeedEntry.COLUMN_NAME_TITLE, title);
-        values.put(FeedEntry.COLUMN_NAME_NOTE, note);
-        values.put(FeedEntry.COLUMN_NAME_LOCATION, "location test");
-
-        //insert can return long, which is the primary key.
-        dbase.insert(FeedEntry.TABLE_NAME, "null", values);
-    }
-
-
 }
 
