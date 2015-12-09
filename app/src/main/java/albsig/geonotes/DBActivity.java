@@ -8,7 +8,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Html;
-import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,11 +22,6 @@ import android.widget.TextView;
 import static albsig.geonotes.DatabaseContract.*;
 
 public class DBActivity extends AppCompatActivity {
-
-    //variables for swiping
-    private float x1, x2;
-    private DisplayMetrics metrics;
-    private int MIN_DISTANCE;
 
     //Databse variables
     private DatabaseHelper dbhelper;
@@ -118,8 +112,8 @@ public class DBActivity extends AppCompatActivity {
                     final EditText dialogTitle = (EditText) dialog.findViewById(R.id.dialogEditTitle);
                     final EditText dialogNote = (EditText) dialog.findViewById(R.id.dialogEditNote);
 
-                    dialogTitle.setHint(title);
-                    dialogNote.setHint(note);
+                    dialogTitle.setText(title);
+                    dialogNote.setText(note);
 
                     dialogCancelButton.setOnClickListener(new View.OnClickListener() {
                         public void onClick(View v) {
