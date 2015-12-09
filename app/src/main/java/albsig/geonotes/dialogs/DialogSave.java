@@ -60,15 +60,21 @@ public class DialogSave extends Dialog implements View.OnClickListener {
         switch (v.getId()) {
 
             case R.id.dialogCancel:
-                Toast.makeText(this.getContext(), "sasss", Toast.LENGTH_SHORT).show();
                 dismiss();
+                break;
             case R.id.dialogSave:
                 saveCurrentPosition(this.dialogTitle.getText().toString(), this.dialogNote.getText().toString(), this.currentLocation);
-                dismiss();
+                break;
         }
     }
 
     private void saveCurrentPosition(String title, String note, Location location) {
+
+        if (null == title || title.isEmpty()) {
+            Toast.makeText(getContext(), "Please fill out title", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         try {
             this.dbhelper = new DatabaseHelper(getContext());
             this.dbase = dbhelper.getWritableDatabase();
@@ -80,6 +86,7 @@ public class DialogSave extends Dialog implements View.OnClickListener {
 
             //insert can return long, which is the primary key.
             dbase.insert(DatabaseContract.FeedEntry.TABLE_NAME, "null", values);
+            dismiss();
         } catch (Exception e) {
             Toast.makeText(getContext(), "Something went wrong ...", Toast.LENGTH_LONG).show();
         }
