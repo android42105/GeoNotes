@@ -8,9 +8,7 @@ import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
-import android.widget.AbsListView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -122,8 +120,16 @@ public class DBActivity extends AppCompatActivity implements DialogEditFragment.
     }
 
     @Override
-    public void onDialogEditSaveClick(String title, String note) {
-
+    public void onDialogEditSaveClick(long primaryKey, String title, String note) {
+        this.database.changeEntry(primaryKey, title, note);
+        for (DatabaseProduct pro : this.allEntrys) {
+            if (pro.getPrimaryKey() == primaryKey) {
+                pro.setTitle(title);
+                pro.setNote(note);
+            }
+        }
+        this.sv.removeAllViews();
+        displayScrollView();
     }
 
 

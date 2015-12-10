@@ -9,7 +9,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.location.Location;
 import android.provider.BaseColumns;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -101,9 +100,18 @@ public class DatabaseHelper extends SQLiteOpenHelper implements BaseColumns {
 
     public void deleteEntry(long primaryKey) {
         SQLiteDatabase db = this.getWritableDatabase();
-        int n = db.delete(TABLE_NAME, "" + _ID + "=" + primaryKey, null);
+        db.delete(TABLE_NAME, _ID + "=" + primaryKey, null);
         db.close();
-        Log.d("KAAAAAAAAAAAAAAAA ", "deltetes:" + n + " primk:" + primaryKey);
+    }
+
+    public void changeEntry(long primaryKey, String title, String note) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_NAME_TITLE, title);
+        values.put(COLUMN_NAME_NOTE, note);
+
+        db.update(TABLE_NAME, values, _ID + "=" + primaryKey, null);
     }
 
 

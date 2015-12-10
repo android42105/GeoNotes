@@ -23,8 +23,7 @@ public class DialogEditFragment extends DialogFragment {
     private String note;
 
     public interface DialogEditListener {
-        void onDialogEditSaveClick(String title, String note);
-
+        void onDialogEditSaveClick(long primaryKey, String title, String note);
         void onDialogEditDeleteClick(long primaryKey);
     }
 
@@ -67,7 +66,7 @@ public class DialogEditFragment extends DialogFragment {
                     Toast.makeText(getActivity(), "Please fill out Title", Toast.LENGTH_SHORT).show();
                 } else {
                     dismiss();
-                    dialoglistener.onDialogEditSaveClick(dialogTitle.getText().toString(), dialogNote.getText().toString());
+                    dialoglistener.onDialogEditSaveClick(primaryKey, dialogTitle.getText().toString(), dialogNote.getText().toString());
                 }
             }
         });
