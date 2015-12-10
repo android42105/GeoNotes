@@ -2,12 +2,14 @@ package albsig.geonotes.activity;
 
 
 import android.app.Service;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -27,11 +29,12 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import albsig.geonotes.R;
+import albsig.geonotes.database.DatabaseContract;
 import albsig.geonotes.database.DatabaseHelper;
-import albsig.geonotes.dialogs.DialogSave;
+import albsig.geonotes.dialogs.DialogSaveFragment;
 
 
-public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, LocationListener {
+public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, LocationListener, DialogSaveFragment.NoticeDialogListener {
 
     private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 3000;
     private static final float UPATE_DISTANCE_IN_METERS = 5;
@@ -43,6 +46,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private LocationManager locationManager;
     private Location currentLocation;
+
+    //Database var
+    private DatabaseHelper dbhelper;
+    private SQLiteDatabase dbase;
 
 
     //Elements in UserInterface
@@ -187,8 +194,34 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     public void openSaveDialog(View v) {
-        DialogSave dsave = new DialogSave(this, currentLocation);
-        dsave.show();
+        DialogFragment dialog = new DialogSaveFragment();
+        dialog.show(getSupportFragmentManager(), "dialogSave");
     }
+
+    @Override
+    public void onDialogSaveSaveClick(String title, String note) {
+        saveCurrentPosition(title, note, this.currentLocation);
+    }
+
+    private void saveCurrentPosition(String title, String note, Location location) {
+
+        try {
+            this.dbhelper = new DatabaseHelper(this);
+            this.dbase = dbhelper.getWritableDatabase();
+
+            ContentValues values = new ContentValues();
+            values.put(DatabaseContract.FeedEntry.COLUMN_NAME_TITLE, title);
+            values.put(DatabaseContract.FeedEntry.COLUMN_NAME_NOTE, note);
+            values.put(DatabaseContract.FeedEntry.COLUMN_NAME_LOCATION, "location test");
+
+            //insert can return long, which is the primary key.
+            dbase.insert(DatabaseContract.FeedEntry.TABLE_NAME, "null", values);
+
+        } catch (Exception e) {
+            Toast.makeText(this, "Something went wrong ...", Toast.LENGTH_LONG).show();
+        }
+    }
+
+
 }
 
