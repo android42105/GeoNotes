@@ -27,6 +27,8 @@ public class DBActivity extends AppCompatActivity implements DialogEditFragment.
 
     private DatabaseHelper database;
     private ScrollView sv;
+    private ArrayList<DatabaseProduct> allEntrys;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,9 +37,11 @@ public class DBActivity extends AppCompatActivity implements DialogEditFragment.
         setContentView(R.layout.activity_db);
 
         this.database = new DatabaseHelper(this);
+        this.allEntrys = database.getAllEntrys();
+
         this.sv = (ScrollView) findViewById(R.id.scrollView);
 
-        readFromDatabase();
+        displayScrollView();
     }
 
     @Override
@@ -67,18 +71,15 @@ public class DBActivity extends AppCompatActivity implements DialogEditFragment.
     }
 
 
-    private void readFromDatabase() {
+    private void displayScrollView() {
+
 
         final LinearLayout ll = new LinearLayout(this);
         ll.setOrientation(LinearLayout.VERTICAL);
-
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(-1, -2);
         params.setMargins(10, 5, 10, 5);
 
-
-        ArrayList<DatabaseProduct> allEntrys = this.database.getAllEntrys();
-
-        for (DatabaseProduct currentEntry : allEntrys) {
+        for (DatabaseProduct currentEntry : this.allEntrys) {
 
             final TextView textView = new TextView(this);
 
@@ -117,7 +118,6 @@ public class DBActivity extends AppCompatActivity implements DialogEditFragment.
             textView.setLayoutParams(params);
             ll.addView(textView);
         }
-
         this.sv.addView(ll);
     }
 
@@ -126,8 +126,25 @@ public class DBActivity extends AppCompatActivity implements DialogEditFragment.
 
     }
 
+
+    /**
+     * Deletes an entry from the database and from the arraylist where it is stashed.
+     * removes all views from scrollview, as it can only hold one view.
+     * creates a new view with the new entrys.
+     *
+     * @param primaryKey
+     */
     @Override
     public void onDialogEditDeleteClick(long primaryKey) {
         database.deleteEntry(primaryKey);
+        DatabaseProduct delme = null;
+        for (DatabaseProduct pro : this.allEntrys) {
+            if (pro.getPrimaryKey() == primaryKey) {
+                delme = pro;
+            }
+        }
+        allEntrys.remove(delme);
+        this.sv.removeAllViews();
+        displayScrollView();
     }
 }
