@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.location.Location;
 import android.provider.BaseColumns;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -93,9 +94,17 @@ public class DatabaseHelper extends SQLiteOpenHelper implements BaseColumns {
             allEntrys.add(new DatabaseProduct(c.getLong(0), c.getString(1), c.getString(2),
                     c.getLong(3), c.getLong(4)));
         }
-
+        db.close();
         return allEntrys;
 
     }
+
+    public void deleteEntry(long primaryKey) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        int n = db.delete(TABLE_NAME, "" + _ID + "=" + primaryKey, null);
+        db.close();
+        Log.d("KAAAAAAAAAAAAAAAA ", "deltetes:" + n + " primk:" + primaryKey);
+    }
+
 
 }

@@ -81,6 +81,8 @@ public class DBActivity extends AppCompatActivity implements DialogEditFragment.
         for (DatabaseProduct currentEntry : allEntrys) {
 
             final TextView textView = new TextView(this);
+
+            final long primaryKey = currentEntry.getPrimaryKey();
             final String title = currentEntry.getTitle();
             final String note = currentEntry.getNote();
 
@@ -94,6 +96,7 @@ public class DBActivity extends AppCompatActivity implements DialogEditFragment.
                     Bundle args = new Bundle();
                     DialogFragment dialogEdit = new DialogEditFragment();
 
+                    args.putLong("primaryKey", primaryKey);
                     args.putString("title", title);
                     args.putString("note", note);
                     dialogEdit.setArguments(args);
@@ -124,7 +127,7 @@ public class DBActivity extends AppCompatActivity implements DialogEditFragment.
     }
 
     @Override
-    public void onDialogEditDeleteClick() {
-
+    public void onDialogEditDeleteClick(long primaryKey) {
+        database.deleteEntry(primaryKey);
     }
 }

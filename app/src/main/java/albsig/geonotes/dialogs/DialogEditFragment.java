@@ -18,19 +18,21 @@ import albsig.geonotes.R;
 public class DialogEditFragment extends DialogFragment {
 
     private DialogEditListener dialoglistener;
+    private long primaryKey;
     private String title;
     private String note;
 
     public interface DialogEditListener {
         void onDialogEditSaveClick(String title, String note);
 
-        void onDialogEditDeleteClick();
+        void onDialogEditDeleteClick(long primaryKey);
     }
 
 
     @Override
     public Dialog onCreateDialog(Bundle saveInstanceState) {
 
+        this.primaryKey = getArguments().getLong("primaryKey");
         this.title = getArguments().getString("title");
         this.note = getArguments().getString("note");
 
@@ -73,7 +75,7 @@ public class DialogEditFragment extends DialogFragment {
         dialogDeleteButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 getDialog().dismiss();
-                dialoglistener.onDialogEditDeleteClick();
+                dialoglistener.onDialogEditDeleteClick(primaryKey);
             }
         });
 
