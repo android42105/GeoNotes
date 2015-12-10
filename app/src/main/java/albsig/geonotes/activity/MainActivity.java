@@ -2,9 +2,7 @@ package albsig.geonotes.activity;
 
 
 import android.app.Service;
-import android.content.ContentValues;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -29,7 +27,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import albsig.geonotes.R;
-import albsig.geonotes.database.DatabaseContract;
 import albsig.geonotes.database.DatabaseHelper;
 import albsig.geonotes.dialogs.DialogSaveFragment;
 
@@ -48,9 +45,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Location currentLocation;
 
     //Database var
-    private DatabaseHelper dbhelper;
-    private SQLiteDatabase dbase;
-
+    private DatabaseHelper databse;
 
     //Elements in UserInterface
     private Button buttonTrack;
@@ -76,6 +71,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         // get the GoogleMap Object.
         this.map = mapFragment.getMap();
+
+        databse = new DatabaseHelper(this);
 
         //init the UI elements
         this.buttonTrack = (Button) findViewById(R.id.buttonTrack);
@@ -200,28 +197,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public void onDialogSaveSaveClick(String title, String note) {
-        saveCurrentPosition(title, note, this.currentLocation);
+        databse.saveCurrentPosition(title, note, this.currentLocation);
     }
-
-    private void saveCurrentPosition(String title, String note, Location location) {
-
-        try {
-            this.dbhelper = new DatabaseHelper(this);
-            this.dbase = dbhelper.getWritableDatabase();
-
-            ContentValues values = new ContentValues();
-            values.put(DatabaseContract.FeedEntry.COLUMN_NAME_TITLE, title);
-            values.put(DatabaseContract.FeedEntry.COLUMN_NAME_NOTE, note);
-            values.put(DatabaseContract.FeedEntry.COLUMN_NAME_LOCATION, "location test");
-
-            //insert can return long, which is the primary key.
-            dbase.insert(DatabaseContract.FeedEntry.TABLE_NAME, "null", values);
-
-        } catch (Exception e) {
-            Toast.makeText(this, "Something went wrong ...", Toast.LENGTH_LONG).show();
-        }
-    }
-
 
 }
 

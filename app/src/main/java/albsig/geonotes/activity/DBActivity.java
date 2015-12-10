@@ -1,37 +1,31 @@
 package albsig.geonotes.activity;
 
 
-import android.content.ContentValues;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.support.v4.app.DialogFragment;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.widget.AbsListView;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 import albsig.geonotes.R;
 import albsig.geonotes.database.DatabaseHelper;
+import albsig.geonotes.database.DatabaseProduct;
 import albsig.geonotes.dialogs.DialogEditFragment;
-
-import static albsig.geonotes.database.DatabaseContract.*;
 
 public class DBActivity extends AppCompatActivity implements DialogEditFragment.DialogEditListener {
 
-    //Databse variables
-    private DatabaseHelper dbhelper;
-    private SQLiteDatabase dbase;
 
+    private DatabaseHelper database;
     private ScrollView sv;
 
     @Override
@@ -40,8 +34,7 @@ public class DBActivity extends AppCompatActivity implements DialogEditFragment.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_db);
 
-        this.dbhelper = new DatabaseHelper(this);
-        this.dbase = dbhelper.getReadableDatabase();
+        this.database = new DatabaseHelper(this);
         this.sv = (ScrollView) findViewById(R.id.scrollView);
 
         readFromDatabase();
@@ -77,29 +70,25 @@ public class DBActivity extends AppCompatActivity implements DialogEditFragment.
     private void readFromDatabase() {
 
         final LinearLayout ll = new LinearLayout(this);
-        final String[] projections = {FeedEntry._ID, FeedEntry.COLUMN_NAME_TITLE, FeedEntry.COLUMN_NAME_NOTE,
-                FeedEntry.COLUMN_NAME_LOCATION};
-
         ll.setOrientation(LinearLayout.VERTICAL);
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(new AbsListView.LayoutParams
-                (LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-        params.setMargins(10, 10, 10, 10);
 
-        Cursor c = dbase.query(
-                FeedEntry.TABLE_NAME, projections, null, null, null, null, null);
-
-        while (c.moveToNext()) {
-
-            final TextView bra = new TextView(this);
-            final String title = c.getString(1);
-            final String note = c.getString(2);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(-1, -2);
+        params.setMargins(10, 5, 10, 5);
 
 
-            bra.setText(Html.fromHtml("<b><u>" + title + "</u></b><br/><br/>" + "<i>" + note + "</i>"));
-            bra.setBackgroundResource(R.drawable.db_textview_shape);
+        ArrayList<DatabaseProduct> allEntrys = this.database.getAllEntrys();
+
+        for (DatabaseProduct currentEntry : allEntrys) {
+
+            final TextView textView = new TextView(this);
+            final String title = currentEntry.getTitle();
+            final String note = currentEntry.getNote();
+
+            textView.setText(Html.fromHtml("<b><u>" + title + "</u></b><br/><br/>" + "<i>" + note + "</i>"));
+            textView.setBackgroundResource(R.drawable.db_textview_shape);
 
 
-            bra.setOnLongClickListener(new View.OnLongClickListener() {
+            textView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
                     Bundle args = new Bundle();
@@ -114,16 +103,16 @@ public class DBActivity extends AppCompatActivity implements DialogEditFragment.
                 }
             });
 
-            bra.setOnClickListener(new View.OnClickListener() {
+            textView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    bra.startAnimation(AnimationUtils.loadAnimation(DBActivity.this, android.R.anim.fade_out));
+                    textView.startAnimation(AnimationUtils.loadAnimation(DBActivity.this, android.R.anim.fade_out));
                 }
             });
 
 
-            bra.setLayoutParams(params);
-            ll.addView(bra);
+            textView.setLayoutParams(params);
+            ll.addView(textView);
         }
 
         this.sv.addView(ll);
