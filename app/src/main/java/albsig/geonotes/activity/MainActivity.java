@@ -9,9 +9,9 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -34,7 +34,7 @@ import albsig.geonotes.database.DatabaseHelper;
 import albsig.geonotes.dialogs.DialogSaveFragment;
 
 
-public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, LocationListener, DialogSaveFragment.NoticeDialogListener {
+public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, LocationListener, DialogSaveFragment.DialogSaveListener {
 
     private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 3000;
     private static final float UPATE_DISTANCE_IN_METERS = 5;

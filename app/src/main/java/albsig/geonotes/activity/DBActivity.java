@@ -4,6 +4,7 @@ package albsig.geonotes.activity;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -21,10 +22,11 @@ import android.widget.TextView;
 
 import albsig.geonotes.R;
 import albsig.geonotes.database.DatabaseHelper;
+import albsig.geonotes.dialogs.DialogEditFragment;
 
 import static albsig.geonotes.database.DatabaseContract.*;
 
-public class DBActivity extends AppCompatActivity {
+public class DBActivity extends AppCompatActivity implements DialogEditFragment.DialogEditListener {
 
     //Databse variables
     private DatabaseHelper dbhelper;
@@ -34,22 +36,20 @@ public class DBActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_db);
 
         this.dbhelper = new DatabaseHelper(this);
         this.dbase = dbhelper.getReadableDatabase();
-
         this.sv = (ScrollView) findViewById(R.id.scrollView);
-        readFromDatabase();
 
+        readFromDatabase();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_db, menu);
-
         return true;
     }
 
@@ -57,7 +57,6 @@ public class DBActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch (item.getItemId()) {
-
             case android.R.id.home:
                 onBackPressed();
                 return true;
@@ -78,11 +77,13 @@ public class DBActivity extends AppCompatActivity {
     private void readFromDatabase() {
 
         final LinearLayout ll = new LinearLayout(this);
-        ll.setOrientation(LinearLayout.VERTICAL);
-
         final String[] projections = {FeedEntry._ID, FeedEntry.COLUMN_NAME_TITLE, FeedEntry.COLUMN_NAME_NOTE,
-                FeedEntry.COLUMN_NAME_LOCATION
-        };
+                FeedEntry.COLUMN_NAME_LOCATION};
+
+        ll.setOrientation(LinearLayout.VERTICAL);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(new AbsListView.LayoutParams
+                (LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        params.setMargins(10, 10, 10, 10);
 
         Cursor c = dbase.query(
                 FeedEntry.TABLE_NAME, projections, null, null, null, null, null);
@@ -93,64 +94,23 @@ public class DBActivity extends AppCompatActivity {
             final String title = c.getString(1);
             final String note = c.getString(2);
 
+
             bra.setText(Html.fromHtml("<b><u>" + title + "</u></b><br/><br/>" + "<i>" + note + "</i>"));
             bra.setBackgroundResource(R.drawable.db_textview_shape);
+
 
             bra.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(DBActivity.this);
-                    dialogBuilder.setView(R.layout.dialog_edit);
-                    final AlertDialog dialog = dialogBuilder.create();
-                    dialog.setCanceledOnTouchOutside(false);
-                    dialog.show();
+                    Bundle args = new Bundle();
+                    DialogFragment dialogEdit = new DialogEditFragment();
 
+                    args.putString("title", title);
+                    args.putString("note", note);
+                    dialogEdit.setArguments(args);
+                    dialogEdit.show(getSupportFragmentManager(), "dialogEdit");
 
-                    final Button dialogSaveButton = (Button) dialog.findViewById(R.id.dialogEditSave);
-                    final Button dialogDeleteButton = (Button) dialog.findViewById(R.id.dialogEditDelete);
-                    final Button dialogCancelButton = (Button) dialog.findViewById(R.id.dialogEditCancel);
-                    final Button dialogShowButton = (Button) dialog.findViewById(R.id.dialogEditShow);
-
-
-                    final EditText dialogTitle = (EditText) dialog.findViewById(R.id.dialogEditTitle);
-                    final EditText dialogNote = (EditText) dialog.findViewById(R.id.dialogEditNote);
-
-                    dialogTitle.setText(title);
-                    dialogNote.setText(note);
-
-                    dialogCancelButton.setOnClickListener(new View.OnClickListener() {
-                        public void onClick(View v) {
-                            dialog.cancel();
-                        }
-                    });
-
-                    dialogSaveButton.setOnClickListener(new View.OnClickListener() {
-                        public void onClick(View v) {
-                            dialog.cancel();
-                            DBActivity.this.dbhelper = new DatabaseHelper(DBActivity.this);
-                            DBActivity.this.dbase = dbhelper.getWritableDatabase();
-
-                            ContentValues values = new ContentValues();
-                            values.put(FeedEntry.COLUMN_NAME_TITLE, title);
-                            values.put(FeedEntry.COLUMN_NAME_NOTE, note);
-                            values.put(FeedEntry.COLUMN_NAME_LOCATION, "location test");
-
-                            //TODO Update in Database
-                        }
-                    });
-
-                    dialogDeleteButton.setOnClickListener(new View.OnClickListener() {
-                        public void onClick(View v) {
-                            //TODO Delete Button functionality
-                        }
-                    });
-
-                    dialogShowButton.setOnClickListener(new View.OnClickListener() {
-                        public void onClick(View v) {
-                            //TODO Show on Map Button functionality
-                        }
-                    });
-                    return false;
+                    return true;
                 }
             });
 
@@ -161,12 +121,21 @@ public class DBActivity extends AppCompatActivity {
                 }
             });
 
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(new AbsListView.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-            params.setMargins(10, 10, 10, 10);
+
             bra.setLayoutParams(params);
             ll.addView(bra);
         }
+
         this.sv.addView(ll);
     }
 
+    @Override
+    public void onDialogEditSaveClick(String title, String note) {
+
+    }
+
+    @Override
+    public void onDialogEditDeleteClick() {
+
+    }
 }
