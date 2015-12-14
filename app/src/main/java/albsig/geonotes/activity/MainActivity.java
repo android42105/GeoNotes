@@ -19,6 +19,7 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -108,10 +109,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
-        LatLng location_win = new LatLng(48.209280, 9.032319);
-        googleMap.addMarker(new MarkerOptions().position(location_win).title("WIN Fakultät"));
-        googleMap.moveCamera(CameraUpdateFactory.newLatLng(location_win));
-        googleMap.animateCamera(CameraUpdateFactory.zoomTo(12));
+        Intent callingIntent = getIntent();
+        LatLng position = new LatLng(callingIntent.getDoubleExtra("DBActivity.LATITUDE",48.209280), callingIntent.getDoubleExtra("DBActivity.LONGITUDE",9.032319));
+        CameraUpdate camera = CameraUpdateFactory.newLatLngZoom(position,15);
+        googleMap.addMarker(new MarkerOptions().position(position).title(callingIntent.getStringExtra("DBActivity.TITLE")));
+        googleMap.animateCamera(camera);
 
     }
 

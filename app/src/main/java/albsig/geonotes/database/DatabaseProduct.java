@@ -8,10 +8,10 @@ public class DatabaseProduct {
     private Long primaryKey;
     private String title;
     private String note;
-    private Long latitude;
-    private Long longitude;
+    private Double latitude;
+    private Double longitude;
 
-    public DatabaseProduct(Long primaryKey, String title, String note, Long latitude, Long longitude) {
+    public DatabaseProduct(Long primaryKey, String title, String note, Double latitude, Double longitude) {
         this.primaryKey = primaryKey;
         this.title = title;
         this.note = note;
@@ -32,11 +32,11 @@ public class DatabaseProduct {
         this.note = note;
     }
 
-    public void setLatitude(Long latitude) {
+    public void setLatitude(Double latitude) {
         this.latitude = latitude;
     }
 
-    public void setLongitude(Long longitude) {
+    public void setLongitude(Double longitude) {
         this.longitude = longitude;
     }
 
@@ -49,11 +49,11 @@ public class DatabaseProduct {
         return title;
     }
 
-    public Long getLatitude() {
+    public Double getLatitude() {
         return latitude;
     }
 
-    public Long getLongitude() {
+    public Double getLongitude() {
         return longitude;
     }
 

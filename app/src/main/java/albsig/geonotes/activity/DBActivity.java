@@ -1,6 +1,7 @@
 package albsig.geonotes.activity;
 
 
+import android.content.Intent;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -85,6 +86,9 @@ public class DBActivity extends AppCompatActivity implements DialogEditFragment.
             final String title = currentEntry.getTitle();
             final String note = currentEntry.getNote();
 
+            final Double latitude = currentEntry.getLatitude();
+            final Double longitude = currentEntry.getLongitude();
+
             textView.setText(Html.fromHtml("<b><u>" + title + "</u></b><br/><br/>" + "<i>" + note + "</i>"));
             textView.setBackgroundResource(R.drawable.db_textview_shape);
 
@@ -109,6 +113,11 @@ public class DBActivity extends AppCompatActivity implements DialogEditFragment.
                 @Override
                 public void onClick(View v) {
                     textView.startAnimation(AnimationUtils.loadAnimation(DBActivity.this, android.R.anim.fade_out));
+                    Intent i = new Intent(getApplicationContext(),MainActivity.class);
+                    i.putExtra("DBActivity.LATITUDE",latitude);
+                    i.putExtra("DBActivity.LONGITUDE",longitude);
+                    i.putExtra("DBActivity.TITLE",title);
+                    startActivity(i);
                 }
             });
 
