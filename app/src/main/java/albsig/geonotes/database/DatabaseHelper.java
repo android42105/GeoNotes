@@ -98,7 +98,6 @@ public class DatabaseHelper extends SQLiteOpenHelper implements BaseColumns {
         }
         db.close();
         return allEntrys;
-
     }
 
     public void deleteEntry(long primaryKey) {
@@ -116,6 +115,4 @@ public class DatabaseHelper extends SQLiteOpenHelper implements BaseColumns {
 
         db.update(TABLE_NAME, values, _ID + "=" + primaryKey, null);
     }
-
-
 }

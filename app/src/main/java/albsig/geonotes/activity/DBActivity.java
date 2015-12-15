@@ -118,6 +118,7 @@ public class DBActivity extends AppCompatActivity implements DialogEditFragment.
                     i.putExtra("DBActivity.LONGITUDE",longitude);
                     i.putExtra("DBActivity.TITLE",title);
                     startActivity(i);
+                    overridePendingTransition(R.anim.pull_in_left,R.anim.push_out_right);
                 }
             });
 
