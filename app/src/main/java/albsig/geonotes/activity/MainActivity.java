@@ -57,6 +57,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private DisplayMetrics metrics;
     private int MIN_DISTANCE;
 
+    //Location from DBActivity
+    private double latitude = 48.209280;
+    private double longitude = 9.032319;
+    private String title = "WIN Fakultät";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -108,13 +113,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-
-        Intent callingIntent = getIntent();
-        LatLng position = new LatLng(callingIntent.getDoubleExtra("DBActivity.LATITUDE",48.209280), callingIntent.getDoubleExtra("DBActivity.LONGITUDE",9.032319));
+        LatLng position = new LatLng(latitude, longitude);
         CameraUpdate camera = CameraUpdateFactory.newLatLngZoom(position,15);
-        googleMap.addMarker(new MarkerOptions().position(position).title(callingIntent.getStringExtra("DBActivity.TITLE")));
+        googleMap.addMarker(new MarkerOptions().position(position).title(title));
         googleMap.animateCamera(camera);
-
     }
 
     @Override
@@ -187,8 +189,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private void swipeRight2Left() {
+
         Intent intent = new Intent(this, DBActivity.class);
-        startActivity(intent);
+        startActivityForResult(intent, 1);
         overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
     }
 
@@ -202,5 +205,21 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         databse.saveCurrentPosition(title, note, this.currentLocation);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (requestCode == 1) {
+            if(resultCode == DBActivity.RESULT_OK) {
+                latitude = data.getDoubleExtra("DBActivity.LATITUDE", 48.209280);
+                longitude = data.getDoubleExtra("DBActivity.LONGITUDE", 9.032319);
+                title = data.getStringExtra("DBActivity.TITLE");
+
+                LatLng position = new LatLng(latitude, longitude);
+                CameraUpdate camera = CameraUpdateFactory.newLatLngZoom(position,15);
+                map.addMarker(new MarkerOptions().position(position).title(title));
+                map.animateCamera(camera);
+            }
+        }
+    }
 }
 

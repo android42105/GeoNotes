@@ -112,16 +112,21 @@ public class DBActivity extends AppCompatActivity implements DialogEditFragment.
             textView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    textView.startAnimation(AnimationUtils.loadAnimation(DBActivity.this, android.R.anim.fade_out));
-                    Intent i = new Intent(getApplicationContext(),MainActivity.class);
-                    i.putExtra("DBActivity.LATITUDE",latitude);
-                    i.putExtra("DBActivity.LONGITUDE",longitude);
-                    i.putExtra("DBActivity.TITLE",title);
-                    startActivity(i);
-                    overridePendingTransition(R.anim.pull_in_left,R.anim.push_out_right);
+               //     Intent i = new Intent(getApplicationContext(),MainActivity.class);
+              //      i.putExtra("DBActivity.LATITUDE",latitude);
+               //     i.putExtra("DBActivity.LONGITUDE",longitude);
+               //     i.putExtra("DBActivity.TITLE",title);
+              //      startActivity(i);
+            //        overridePendingTransition(R.anim.pull_in_left,R.anim.push_out_right);
+
+                    Intent returnIntent = new Intent();
+                    returnIntent.putExtra("DBActivity.LATITUDE", latitude);
+                    returnIntent.putExtra("DBActivity.LONGITUDE",longitude);
+                    returnIntent.putExtra("DBActivity.TITLE",title);
+                    setResult(DBActivity.RESULT_OK,returnIntent);
+                    finish();
                 }
             });
-
 
             textView.setLayoutParams(params);
             ll.addView(textView);
