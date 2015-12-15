@@ -53,12 +53,14 @@ public class DialogSaveFragment extends DialogFragment {
                 if (title == null || title.getText().toString().isEmpty()) {
                     Toast.makeText(getActivity(), "Please fill out Title", Toast.LENGTH_SHORT).show();
                 } else {
+                    if(note == null || note.toString().isEmpty()) {
+                        note.setText(" ");
+                    }
                     dismiss();
                     dialoglistener.onDialogSaveSaveClick(title.getText().toString(), note.getText().toString());
                 }
             }
         });
-
         return builder.create();
     }
 

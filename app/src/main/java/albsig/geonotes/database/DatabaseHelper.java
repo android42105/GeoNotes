@@ -70,8 +70,13 @@ public class DatabaseHelper extends SQLiteOpenHelper implements BaseColumns {
 
         values.put(COLUMN_NAME_TITLE, title);
         values.put(COLUMN_NAME_NOTE, note);
-        values.put(COLUMN_NAME_LATITUDE, location.getLatitude());
-        values.put(COLUMN_NAME_LONGITUDE, location.getLongitude());
+        if(location != null) {
+            values.put(COLUMN_NAME_LATITUDE, location.getLatitude());
+            values.put(COLUMN_NAME_LONGITUDE, location.getLongitude());
+        } else {
+            values.put(COLUMN_NAME_LATITUDE, 48.209280);
+            values.put(COLUMN_NAME_LONGITUDE, 9.032319);
+        }
 
         long primarykey = db.insert(TABLE_NAME, "null", values);
         db.close();
