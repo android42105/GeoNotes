@@ -10,7 +10,6 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
-import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -30,6 +29,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import albsig.geonotes.R;
 import albsig.geonotes.database.DatabaseHelper;
 import albsig.geonotes.dialogs.DialogSaveFragment;
+import albsig.geonotes.util.EzSwipe;
 
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, LocationListener, DialogSaveFragment.DialogSaveListener {
@@ -52,11 +52,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Button buttonTrack;
     private Button buttonRemoveMarkers;
     private ProgressBar progressBar;
-
-    //variables for swiping
-    private float x1, x2;
-    private DisplayMetrics metrics;
-    private int MIN_DISTANCE;
 
     //Location from DBActivity
     private double latitude = 48.209280;
@@ -87,10 +82,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         this.progressBar = (ProgressBar) findViewById(R.id.progressBar);
         this.progressBar.setVisibility(View.GONE);
 
-        //display info
-        this.metrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(metrics);
-        this.MIN_DISTANCE = metrics.widthPixels / 3;
     }
 
 
@@ -116,7 +107,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onMapReady(GoogleMap googleMap) {
         LatLng position = new LatLng(latitude, longitude);
-        CameraUpdate camera = CameraUpdateFactory.newLatLngZoom(position,15);
+        CameraUpdate camera = CameraUpdateFactory.newLatLngZoom(position, 15);
         googleMap.addMarker(new MarkerOptions().position(position).title(title));
         googleMap.animateCamera(camera);
     }
@@ -174,17 +165,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
-        switch (event.getAction()) {
+        switch (EzSwipe.getAction(event)) {
 
-            case MotionEvent.ACTION_DOWN:
-                x1 = event.getX();
+            case EzSwipe.SWIPE_RIGHT_TO_LEFT:
+                swipeRight2Left();
                 break;
-            case MotionEvent.ACTION_UP:
-                x2 = event.getX();
-                float deltaX = x1 - x2;
-                if (deltaX > MIN_DISTANCE) {
-                    swipeRight2Left();
-                }
+            default:
                 break;
         }
         return super.onTouchEvent(event);
@@ -211,13 +197,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         if (requestCode == 1) {
-            if(resultCode == DBActivity.RESULT_OK) {
+            if (resultCode == DBActivity.RESULT_OK) {
                 latitude = data.getDoubleExtra("DBActivity.LATITUDE", 48.209280);
                 longitude = data.getDoubleExtra("DBActivity.LONGITUDE", 9.032319);
                 title = data.getStringExtra("DBActivity.TITLE");
 
                 LatLng position = new LatLng(latitude, longitude);
-                CameraUpdate camera = CameraUpdateFactory.newLatLngZoom(position,15);
+                CameraUpdate camera = CameraUpdateFactory.newLatLngZoom(position, 15);
                 map.addMarker(new MarkerOptions().position(position).title(title));
                 map.animateCamera(camera);
             }
