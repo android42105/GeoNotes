@@ -50,6 +50,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     //Elements in UserInterface
     private Button buttonTrack;
+    private Button buttonRemoveMarkers;
     private ProgressBar progressBar;
 
     //variables for swiping
@@ -82,6 +83,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         //init the UI elements
         this.buttonTrack = (Button) findViewById(R.id.buttonTrack);
+        this.buttonRemoveMarkers = (Button) findViewById(R.id.buttonRemoveMarkers);
         this.progressBar = (ProgressBar) findViewById(R.id.progressBar);
         this.progressBar.setVisibility(View.GONE);
 
@@ -220,6 +222,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 map.animateCamera(camera);
             }
         }
+    }
+
+    public void removeMarkers(View v) {
+        map.clear();
     }
 }
 
