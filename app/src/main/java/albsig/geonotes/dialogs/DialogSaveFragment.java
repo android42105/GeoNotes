@@ -32,7 +32,6 @@ public class DialogSaveFragment extends DialogFragment {
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         final LayoutInflater inflater = getActivity().getLayoutInflater();
         final View view = inflater.inflate(R.layout.dialog_save, null);
-
         builder.setView(view);
 
         // getting the Views components.

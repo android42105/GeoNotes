@@ -15,8 +15,6 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -26,9 +24,12 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.ArrayList;
+
 import albsig.geonotes.R;
 import albsig.geonotes.database.DatabaseHelper;
 import albsig.geonotes.dialogs.DialogSaveFragment;
+import albsig.geonotes.util.EzLatLng;
 import albsig.geonotes.util.EzSwipe;
 
 
@@ -56,6 +57,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private double latitude = 48.209280;
     private double longitude = 9.032319;
     private String title = "WIN Fakultät";
+
+    private ArrayList<EzLatLng> visitedLocations;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,6 +117,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         this.currentLocation = location;
         this.map.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude())));
         this.map.setMyLocationEnabled(true);
+        this.visitedLocations.add(new EzLatLng(currentLocation.getLatitude(), currentLocation.getLongitude()));
     }
 
     @Override
@@ -138,17 +142,17 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @SuppressWarnings("ResourceType")
     public void startTracking(View v) {
         if (!isTracking) {
-            Toast.makeText(this, "locating Position, please wait...", Toast.LENGTH_LONG).show();
+            this.visitedLocations = new ArrayList<>(); // creates a new instanz of this object.
             String provider = locationManager.getBestProvider(new Criteria(), true);
             this.locationManager.requestLocationUpdates(provider, UPDATE_INTERVAL_IN_MILLISECONDS, UPATE_DISTANCE_IN_METERS, this);
             this.buttonTrack.setText(R.string.track_stop);
             this.isTracking = true;
 
         } else if (isTracking) {
-            Toast.makeText(this, "locating stopped", Toast.LENGTH_LONG).show();
+
             this.buttonTrack.setText(R.string.track_start);
             this.isTracking = false;
-  
+
             stopLocationUpdates();
         }
     }
