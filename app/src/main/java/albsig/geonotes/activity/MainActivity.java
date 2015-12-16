@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -158,7 +159,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             Bundle args = new Bundle();
             args.putString("title", "Save your latest Track");
             dialogTrack.setArguments(args);
-            dialogTrack.show(getSupportFragmentManager(), "dialogTrack");
+            dialogTrack.show(getSupportFragmentManager(), "dialogSaveTrack");
 
         }
     }
@@ -195,13 +196,19 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         Bundle args = new Bundle();
         args.putString("title", "Save your current Location");
         dialogLocation.setArguments(args);
-        dialogLocation.show(getSupportFragmentManager(), "dialogSave");
+        dialogLocation.show(getSupportFragmentManager(), "dialogSaveLocation");
     }
 
     @Override
-    public void onDialogSaveSaveClick(String title, String note) {
-        //TODO differiantate between clicks from dialogLocation and dialogTrack
-        databse.saveCurrentPosition(title, note, this.currentLocation);
+    public void onDialogSaveSaveClick(String title, String note, String tag) {
+        //differentiate between incoming save clicks from DialogsaveFragment.
+        if (tag.equals("dialogSaveLocation")) {
+            databse.saveCurrentPosition(title, note, this.currentLocation);
+        }
+        if (tag.equals("dialogSaveTrack")) {
+            //TODO logic for saving a whole track for visited locations comes here.
+            Toast.makeText(this, "it works", Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override

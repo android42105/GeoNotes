@@ -22,7 +22,7 @@ public class DialogSaveFragment extends DialogFragment {
 
     //callback interface for interaction.
     public interface DialogSaveListener {
-        void onDialogSaveSaveClick(String title, String note);
+        void onDialogSaveSaveClick(String title, String note, String tag);
     }
 
 
@@ -37,6 +37,7 @@ public class DialogSaveFragment extends DialogFragment {
         if (getArguments().getString("title") != null) {
             builder.setTitle(getArguments().getString("title"));
         }
+
         builder.setView(view);
 
         // getting the Views components.
@@ -61,7 +62,7 @@ public class DialogSaveFragment extends DialogFragment {
                         note.setText(" ");
                     }
                     dismiss();
-                    dialoglistener.onDialogSaveSaveClick(title.getText().toString(), note.getText().toString());
+                    dialoglistener.onDialogSaveSaveClick(title.getText().toString(), note.getText().toString(), getTag());
                 }
             }
         });
