@@ -51,7 +51,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     //Elements in UserInterface
     private Button buttonTrack;
     private Button buttonRemoveMarkers;
-    private ProgressBar progressBar;
 
     //Location from DBActivity
     private double latitude = 48.209280;
@@ -79,8 +78,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         //init the UI elements
         this.buttonTrack = (Button) findViewById(R.id.buttonTrack);
         this.buttonRemoveMarkers = (Button) findViewById(R.id.buttonRemoveMarkers);
-        this.progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        this.progressBar.setVisibility(View.GONE);
 
     }
 
@@ -146,12 +143,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             this.locationManager.requestLocationUpdates(provider, UPDATE_INTERVAL_IN_MILLISECONDS, UPATE_DISTANCE_IN_METERS, this);
             this.buttonTrack.setText(R.string.track_stop);
             this.isTracking = true;
-            this.progressBar.setVisibility(View.VISIBLE);
+
         } else if (isTracking) {
             Toast.makeText(this, "locating stopped", Toast.LENGTH_LONG).show();
             this.buttonTrack.setText(R.string.track_start);
             this.isTracking = false;
-            this.progressBar.setVisibility(View.GONE);
+  
             stopLocationUpdates();
         }
     }
