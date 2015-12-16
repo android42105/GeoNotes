@@ -152,8 +152,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             this.buttonTrack.setText(R.string.track_start);
             this.isTracking = false;
-
             stopLocationUpdates();
+
+            DialogFragment dialogTrack = new DialogSaveFragment();
+            Bundle args = new Bundle();
+            args.putString("title", "Save your latest Track");
+            dialogTrack.setArguments(args);
+            dialogTrack.show(getSupportFragmentManager(), "dialogTrack");
+
         }
     }
 
@@ -185,12 +191,16 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     public void openSaveDialog(View v) {
-        DialogFragment dialog = new DialogSaveFragment();
-        dialog.show(getSupportFragmentManager(), "dialogSave");
+        DialogFragment dialogLocation = new DialogSaveFragment();
+        Bundle args = new Bundle();
+        args.putString("title", "Save your current Location");
+        dialogLocation.setArguments(args);
+        dialogLocation.show(getSupportFragmentManager(), "dialogSave");
     }
 
     @Override
     public void onDialogSaveSaveClick(String title, String note) {
+        //TODO differiantate between clicks from dialogLocation and dialogTrack
         databse.saveCurrentPosition(title, note, this.currentLocation);
     }
 

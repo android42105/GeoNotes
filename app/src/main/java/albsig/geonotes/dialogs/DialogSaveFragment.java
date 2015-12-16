@@ -25,6 +25,7 @@ public class DialogSaveFragment extends DialogFragment {
         void onDialogSaveSaveClick(String title, String note);
     }
 
+
     @Override
     public Dialog onCreateDialog(Bundle saveInstanceState) {
 
@@ -32,6 +33,10 @@ public class DialogSaveFragment extends DialogFragment {
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         final LayoutInflater inflater = getActivity().getLayoutInflater();
         final View view = inflater.inflate(R.layout.dialog_save, null);
+
+        if (getArguments().getString("title") != null) {
+            builder.setTitle(getArguments().getString("title"));
+        }
         builder.setView(view);
 
         // getting the Views components.
@@ -52,7 +57,7 @@ public class DialogSaveFragment extends DialogFragment {
                 if (title == null || title.getText().toString().isEmpty()) {
                     Toast.makeText(getActivity(), "Please fill out Title", Toast.LENGTH_SHORT).show();
                 } else {
-                    if(note == null || note.toString().isEmpty()) {
+                    if (note == null || note.toString().isEmpty()) {
                         note.setText(" ");
                     }
                     dismiss();
