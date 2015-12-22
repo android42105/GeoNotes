@@ -17,7 +17,7 @@ public class DatabaseHelper extends SQLiteOpenHelper implements BaseColumns {
 
     // If you change the database schema, you must increment the database version.
     //---------------------------------------------------------------
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 2;
     public static final String DATABASE_NAME = "GeoNotesDATABASE.db";
     //---------------------------------------------------------------
     public static final String TABLE_NAME = "SavedLocation2";
@@ -25,6 +25,7 @@ public class DatabaseHelper extends SQLiteOpenHelper implements BaseColumns {
     public static final String COLUMN_NAME_NOTE = "note";
     public static final String COLUMN_NAME_LATITUDE = "latitude";
     public static final String COLUMN_NAME_LONGITUDE = "longitude";
+    public static final String COLUMN_NAME_TRACKNO = "trackno";
     //---------------------------------------------------------------
 
     //SQL statements
@@ -34,7 +35,8 @@ public class DatabaseHelper extends SQLiteOpenHelper implements BaseColumns {
             COLUMN_NAME_TITLE + " TEXT," +
             COLUMN_NAME_NOTE + " TEXT," +
             COLUMN_NAME_LATITUDE + " REAL," +
-            COLUMN_NAME_LONGITUDE + " REAL" +
+            COLUMN_NAME_LONGITUDE + " REAL," +
+            COLUMN_NAME_TRACKNO + " REAL" +
             " );";
 
     public DatabaseHelper(Context context) {
@@ -63,7 +65,7 @@ public class DatabaseHelper extends SQLiteOpenHelper implements BaseColumns {
      * @param location only lat and long will be saved.
      * @return primarykey of the newly added entry
      */
-    public long saveCurrentPosition(String title, String note, Location location) {
+    public long saveCurrentPosition(String title, String note, Location location, Double trackNo) {
 
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -77,6 +79,7 @@ public class DatabaseHelper extends SQLiteOpenHelper implements BaseColumns {
             values.put(COLUMN_NAME_LATITUDE, 48.209280);
             values.put(COLUMN_NAME_LONGITUDE, 9.032319);
         }
+        values.put(COLUMN_NAME_LONGITUDE,trackNo);
 
         long primarykey = db.insert(TABLE_NAME, "null", values);
         db.close();
@@ -94,7 +97,7 @@ public class DatabaseHelper extends SQLiteOpenHelper implements BaseColumns {
 
         while (c.moveToNext()) {
             allEntrys.add(new DatabaseProduct(c.getLong(0), c.getString(1), c.getString(2),
-                    c.getDouble(3), c.getDouble(4)));
+                    c.getDouble(3), c.getDouble(4),c.getDouble(5)));
         }
         db.close();
         return allEntrys;

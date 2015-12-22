@@ -89,7 +89,9 @@ public class DBActivity extends AppCompatActivity implements DialogEditFragment.
             final Double latitude = currentEntry.getLatitude();
             final Double longitude = currentEntry.getLongitude();
 
-            textView.setText(Html.fromHtml("<b><u>" + title + "</u></b><br/><br/>" + "<i>" + note + "</i>"));
+            final Double trackNo = currentEntry.getTrackNo();
+
+            textView.setText(Html.fromHtml("<b><u>" + title + "<font color='red'>" + trackNo + "</font></u></b><br/><br/>" + "<i>" + note + "</i>"));
             textView.setBackgroundResource(R.drawable.db_textview_shape);
 
 
@@ -112,13 +114,6 @@ public class DBActivity extends AppCompatActivity implements DialogEditFragment.
             textView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-               //     Intent i = new Intent(getApplicationContext(),MainActivity.class);
-              //      i.putExtra("DBActivity.LATITUDE",latitude);
-               //     i.putExtra("DBActivity.LONGITUDE",longitude);
-               //     i.putExtra("DBActivity.TITLE",title);
-              //      startActivity(i);
-            //        overridePendingTransition(R.anim.pull_in_left,R.anim.push_out_right);
-
                     Intent returnIntent = new Intent();
                     returnIntent.putExtra("DBActivity.LATITUDE", latitude);
                     returnIntent.putExtra("DBActivity.LONGITUDE",longitude);
