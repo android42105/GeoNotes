@@ -9,7 +9,6 @@ import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -18,7 +17,8 @@ import java.util.ArrayList;
 
 import albsig.geonotes.R;
 import albsig.geonotes.database.DatabaseHelper;
-import albsig.geonotes.database.DatabaseProduct;
+import albsig.geonotes.database.TrackDto;
+import albsig.geonotes.database.WaypointDto;
 import albsig.geonotes.dialogs.DialogEditFragment;
 
 public class DBActivity extends AppCompatActivity implements DialogEditFragment.DialogEditListener {
@@ -26,7 +26,8 @@ public class DBActivity extends AppCompatActivity implements DialogEditFragment.
 
     private DatabaseHelper database;
     private ScrollView sv;
-    private ArrayList<DatabaseProduct> allEntrys;
+    private ArrayList<TrackDto> allEntrysTrack;
+    private ArrayList<WaypointDto> allEntrysWaypoint;
 
 
     @Override
@@ -36,7 +37,8 @@ public class DBActivity extends AppCompatActivity implements DialogEditFragment.
         setContentView(R.layout.activity_db);
 
         this.database = new DatabaseHelper(this);
-        this.allEntrys = database.getAllEntrys();
+        this.allEntrysWaypoint = database.getAllEntrysWaypoint();
+        this.allEntrysTrack = database.getAllEntrysTrack();
 
         this.sv = (ScrollView) findViewById(R.id.scrollView);
 
@@ -72,13 +74,12 @@ public class DBActivity extends AppCompatActivity implements DialogEditFragment.
 
     private void displayScrollView() {
 
-
         final LinearLayout ll = new LinearLayout(this);
         ll.setOrientation(LinearLayout.VERTICAL);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(-1, -2);
         params.setMargins(10, 5, 10, 5);
 
-        for (DatabaseProduct currentEntry : this.allEntrys) {
+        for (WaypointDto currentEntry : this.allEntrysWaypoint) {
 
             final TextView textView = new TextView(this);
 
@@ -89,9 +90,7 @@ public class DBActivity extends AppCompatActivity implements DialogEditFragment.
             final Double latitude = currentEntry.getLatitude();
             final Double longitude = currentEntry.getLongitude();
 
-            final Double trackNo = currentEntry.getTrackNo();
-
-            textView.setText(Html.fromHtml("<b><u>" + title + "<font color='red'>" + trackNo + "</font></u></b><br/><br/>" + "<i>" + note + "</i>"));
+            textView.setText(Html.fromHtml("<b><u>" + title + "</u></b><br/><br/>" + "<i>" + note + "</i>"));
             textView.setBackgroundResource(R.drawable.db_textview_shape);
 
 
@@ -131,8 +130,8 @@ public class DBActivity extends AppCompatActivity implements DialogEditFragment.
 
     @Override
     public void onDialogEditSaveClick(long primaryKey, String title, String note) {
-        this.database.changeEntry(primaryKey, title, note);
-        for (DatabaseProduct pro : this.allEntrys) {
+        this.database.changeEntryWaypoint(primaryKey, title, note);
+        for (WaypointDto pro : this.allEntrysWaypoint) {
             if (pro.getPrimaryKey() == primaryKey) {
                 pro.setTitle(title);
                 pro.setNote(note);
@@ -152,14 +151,14 @@ public class DBActivity extends AppCompatActivity implements DialogEditFragment.
      */
     @Override
     public void onDialogEditDeleteClick(long primaryKey) {
-        database.deleteEntry(primaryKey);
-        DatabaseProduct delme = null;
-        for (DatabaseProduct pro : this.allEntrys) {
+        database.deleteEntryWaypoint(primaryKey);
+        WaypointDto delme = null;
+        for (WaypointDto pro : this.allEntrysWaypoint) {
             if (pro.getPrimaryKey() == primaryKey) {
                 delme = pro;
             }
         }
-        allEntrys.remove(delme);
+        allEntrysWaypoint.remove(delme);
         this.sv.removeAllViews();
         displayScrollView();
     }

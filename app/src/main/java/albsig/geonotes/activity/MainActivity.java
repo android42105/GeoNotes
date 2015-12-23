@@ -15,7 +15,6 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -25,12 +24,9 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import java.util.ArrayList;
-
 import albsig.geonotes.R;
 import albsig.geonotes.database.DatabaseHelper;
 import albsig.geonotes.dialogs.DialogSaveFragment;
-import albsig.geonotes.util.EzLatLng;
 import albsig.geonotes.util.EzSwipe;
 
 
@@ -48,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Location currentLocation;
 
     //Database var
-    private DatabaseHelper databse;
+    private DatabaseHelper database;
 
     //Elements in UserInterface
     private Button buttonTrack;
@@ -59,7 +55,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private double longitude = 9.032319;
     private String title = "WIN Fakultät";
 
-    private ArrayList<EzLatLng> visitedLocations;
+    private String trackInfo;
+    private long time;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,12 +74,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         // get the GoogleMap Object.
         this.map = mapFragment.getMap();
 
-        databse = new DatabaseHelper(this);
+        database = new DatabaseHelper(this);
 
         //init the UI elements
         this.buttonTrack = (Button) findViewById(R.id.buttonTrack);
         this.buttonRemoveMarkers = (Button) findViewById(R.id.buttonRemoveMarkers);
-
     }
 
 
@@ -118,7 +114,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         this.currentLocation = location;
         this.map.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude())));
         this.map.setMyLocationEnabled(true);
-        this.visitedLocations.add(new EzLatLng(currentLocation.getLatitude(), currentLocation.getLongitude()));
+
+        this.trackInfo += currentLocation.getLatitude()+","+currentLocation.getLongitude()+";";
     }
 
     @Override
@@ -143,13 +140,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @SuppressWarnings("ResourceType")
     public void startTracking(View v) {
         if (!isTracking) {
-            this.visitedLocations = new ArrayList<>(); // creates a new instanz of this object.
+            time = System.currentTimeMillis();
+            this.trackInfo = String.valueOf("");
             String provider = locationManager.getBestProvider(new Criteria(), true);
             this.locationManager.requestLocationUpdates(provider, UPDATE_INTERVAL_IN_MILLISECONDS, UPATE_DISTANCE_IN_METERS, this);
             this.buttonTrack.setText(R.string.track_stop);
             this.isTracking = true;
 
         } else if (isTracking) {
+            this.time = System.currentTimeMillis() - this.time;
 
             this.buttonTrack.setText(R.string.track_start);
             this.isTracking = false;
@@ -160,7 +159,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             args.putString("title", "Save your latest Track");
             dialogTrack.setArguments(args);
             dialogTrack.show(getSupportFragmentManager(), "dialogSaveTrack");
-
         }
     }
 
@@ -203,11 +201,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onDialogSaveSaveClick(String title, String note, String tag) {
         //differentiate between incoming save clicks from DialogsaveFragment.
         if (tag.equals("dialogSaveLocation")) {
-            databse.saveCurrentPosition(title, note, this.currentLocation);
+            database.saveCurrentPosition(title, note, this.currentLocation);
         }
         if (tag.equals("dialogSaveTrack")) {
-            //TODO logic for saving a whole track for visited locations comes here.
-            Toast.makeText(this, "it works", Toast.LENGTH_LONG).show();
+            database.saveTrack(title, note, this.trackInfo, String.valueOf(this.time));
         }
     }
 

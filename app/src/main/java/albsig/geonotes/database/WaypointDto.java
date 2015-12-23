@@ -3,23 +3,20 @@ package albsig.geonotes.database;
 /**
  * simple class to refreclt how the databse looks.
  */
-public class DatabaseProduct {
+public class WaypointDto {
 
     private Long primaryKey;
     private String title;
     private String note;
     private Double latitude;
     private Double longitude;
-    private Double trackNo;
 
-    public DatabaseProduct(Long primaryKey, String title, String note, Double latitude, Double longitude, Double trackNo) {
+    public WaypointDto(Long primaryKey, String title, String note, Double latitude, Double longitude) {
         this.primaryKey = primaryKey;
         this.title = title;
         this.note = note;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.trackNo = trackNo;
-
     }
 
     public void setPrimaryKey(Long primaryKey) {
@@ -42,10 +39,6 @@ public class DatabaseProduct {
         this.longitude = longitude;
     }
 
-    public void setTrackNo(Double trackNo) {
-        this.trackNo = trackNo;
-    }
-
     public Long getPrimaryKey() {
 
         return primaryKey;
@@ -65,9 +58,5 @@ public class DatabaseProduct {
 
     public String getNote() {
         return note;
-    }
-
-    public Double getTrackNo() {
-        return trackNo;
     }
 }

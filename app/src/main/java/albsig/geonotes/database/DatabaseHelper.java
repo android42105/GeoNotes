@@ -17,26 +17,44 @@ public class DatabaseHelper extends SQLiteOpenHelper implements BaseColumns {
 
     // If you change the database schema, you must increment the database version.
     //---------------------------------------------------------------
-    public static final int DATABASE_VERSION = 2;
+    public static final int DATABASE_VERSION = 5;
     public static final String DATABASE_NAME = "GeoNotesDATABASE.db";
     //---------------------------------------------------------------
-    public static final String TABLE_NAME = "SavedLocation2";
-    public static final String COLUMN_NAME_TITLE = "title";
-    public static final String COLUMN_NAME_NOTE = "note";
-    public static final String COLUMN_NAME_LATITUDE = "latitude";
-    public static final String COLUMN_NAME_LONGITUDE = "longitude";
-    public static final String COLUMN_NAME_TRACKNO = "trackno";
+    public static final String TABLE_NAME_TRACK = "SavedTracks";
+    public static final String TABLE_NAME_WAYPOINT = "SavedWaypoints";
+
+
+    //Columns TRACK
+    public static final String COLUMN_TRACK_TITLE = "title";
+    public static final String COLUMN_TRACK_NOTE = "note";
+    public static final String COLUMN_TRACK_TRACKINFO = "trackinfo";
+    public static final String COLUMN_TRACK_TIME = "time";
+
+    //Columns WAYPOINT
+    public static final String COLUMN_WAYPOINT_TITLE = "title";
+    public static final String COLUMN_WAYPOINT_NOTE = "note";
+    public static final String COLUMN_WAYPOINT_LATITUDE = "latitude";
+    public static final String COLUMN_WAYPOINT_LONGITUDE = "longitude";
+
     //---------------------------------------------------------------
 
     //SQL statements
-    private final String SQL_CREATE_ENTRIES = "CREATE TABLE " +
-            TABLE_NAME + " (" +
+    private final String CREATE_TABLE_TRACK = "CREATE TABLE " +
+            TABLE_NAME_TRACK + " (" +
             _ID + " INTEGER PRIMARY KEY," +
-            COLUMN_NAME_TITLE + " TEXT," +
-            COLUMN_NAME_NOTE + " TEXT," +
-            COLUMN_NAME_LATITUDE + " REAL," +
-            COLUMN_NAME_LONGITUDE + " REAL," +
-            COLUMN_NAME_TRACKNO + " REAL" +
+            COLUMN_TRACK_TITLE + " TEXT," +
+            COLUMN_TRACK_NOTE + " TEXT," +
+            COLUMN_TRACK_TRACKINFO + " TEXT," +
+            COLUMN_TRACK_TIME + " TEXT" +
+            " );";
+
+    private final String CREATE_TABLE_WAYPOINT = "CREATE TABLE " +
+            TABLE_NAME_WAYPOINT + " (" +
+            _ID + " INTEGER PRIMARY KEY," +
+            COLUMN_WAYPOINT_TITLE + " TEXT," +
+            COLUMN_WAYPOINT_NOTE + " TEXT," +
+            COLUMN_WAYPOINT_LATITUDE + " REAL," +
+            COLUMN_WAYPOINT_LONGITUDE + " REAL" +
             " );";
 
     public DatabaseHelper(Context context) {
@@ -46,13 +64,14 @@ public class DatabaseHelper extends SQLiteOpenHelper implements BaseColumns {
     @Override
     public void onCreate(SQLiteDatabase db) {
         Log.d("IN DATABASEHELPER", " onCREATE HAS BEEN CALLED");
-        db.execSQL(SQL_CREATE_ENTRIES);
+        db.execSQL(CREATE_TABLE_TRACK);
+        db.execSQL(CREATE_TABLE_WAYPOINT);
     }
 
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        String SQL_DELETE_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME;
+        String SQL_DELETE_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME_WAYPOINT;
         db.execSQL(SQL_DELETE_TABLE);
         onCreate(db);
     }
@@ -62,60 +81,107 @@ public class DatabaseHelper extends SQLiteOpenHelper implements BaseColumns {
      *
      * @param title
      * @param note
-     * @param location only lat and long will be saved.
+     * @param trackInfo
+     * @param time
      * @return primarykey of the newly added entry
      */
-    public long saveCurrentPosition(String title, String note, Location location, Double trackNo) {
+    public long saveTrack(String title, String note,String trackInfo, String time) {
 
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
 
-        values.put(COLUMN_NAME_TITLE, title);
-        values.put(COLUMN_NAME_NOTE, note);
-        if(location != null) {
-            values.put(COLUMN_NAME_LATITUDE, location.getLatitude());
-            values.put(COLUMN_NAME_LONGITUDE, location.getLongitude());
-        } else {
-            values.put(COLUMN_NAME_LATITUDE, 48.209280);
-            values.put(COLUMN_NAME_LONGITUDE, 9.032319);
-        }
-        values.put(COLUMN_NAME_LONGITUDE,trackNo);
+        values.put(COLUMN_TRACK_TITLE, title);
+        values.put(COLUMN_TRACK_NOTE, note);
 
-        long primarykey = db.insert(TABLE_NAME, "null", values);
+        values.put(COLUMN_TRACK_TRACKINFO,trackInfo);
+        values.put(COLUMN_TRACK_TIME, time);
+
+        long primarykey = db.insert(TABLE_NAME_TRACK, "null", values);
+        db.close();
+        return primarykey;
+    }
+
+    public long saveCurrentPosition(String title, String note,Location location) {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(COLUMN_WAYPOINT_TITLE, title);
+        values.put(COLUMN_WAYPOINT_NOTE, note);
+
+        if(location != null) {
+            values.put(COLUMN_WAYPOINT_LATITUDE,location.getLatitude());
+            values.put(COLUMN_WAYPOINT_LONGITUDE,location.getLongitude());
+        } else {
+            values.put(COLUMN_WAYPOINT_LATITUDE,48.209280);
+            values.put(COLUMN_WAYPOINT_LONGITUDE,9.032319);
+        }
+
+        long primarykey = db.insert(TABLE_NAME_WAYPOINT, "null", values);
         db.close();
         return primarykey;
     }
 
 
-    public ArrayList<DatabaseProduct> getAllEntrys() {
+    public ArrayList<TrackDto> getAllEntrysTrack() {
 
-        ArrayList<DatabaseProduct> allEntrys = new ArrayList<DatabaseProduct>();
+        ArrayList<TrackDto> allEntrys = new ArrayList<TrackDto>();
 
         SQLiteDatabase db = this.getReadableDatabase();
-        String query = "Select * FROM " + TABLE_NAME;
+        String query = "Select * FROM " + TABLE_NAME_TRACK;
         Cursor c = db.rawQuery(query, null);
 
         while (c.moveToNext()) {
-            allEntrys.add(new DatabaseProduct(c.getLong(0), c.getString(1), c.getString(2),
-                    c.getDouble(3), c.getDouble(4),c.getDouble(5)));
+            allEntrys.add(new TrackDto(c.getLong(0), c.getString(1), c.getString(2), c.getString(3),c.getString(4)));
         }
         db.close();
         return allEntrys;
     }
 
-    public void deleteEntry(long primaryKey) {
+    public ArrayList<WaypointDto> getAllEntrysWaypoint() {
+
+        ArrayList<WaypointDto> allEntrys = new ArrayList<WaypointDto>();
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "Select * FROM " + TABLE_NAME_WAYPOINT;
+        Cursor c = db.rawQuery(query, null);
+
+        while (c.moveToNext()) {
+            allEntrys.add(new WaypointDto(c.getLong(0), c.getString(1), c.getString(2), c.getDouble(3),c.getDouble(4)));
+        }
+        db.close();
+        return allEntrys;
+    }
+
+    public void deleteEntryTrack(long primaryKey) {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_NAME, _ID + "=" + primaryKey, null);
+        db.delete(TABLE_NAME_TRACK, _ID + "=" + primaryKey, null);
         db.close();
     }
 
-    public void changeEntry(long primaryKey, String title, String note) {
+    public void deleteEntryWaypoint(long primaryKey) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_NAME_WAYPOINT, _ID + "=" + primaryKey, null);
+        db.close();
+    }
+
+    public void changeEntryWaypoint(long primaryKey, String title, String note) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(COLUMN_NAME_TITLE, title);
-        values.put(COLUMN_NAME_NOTE, note);
+        values.put(COLUMN_WAYPOINT_TITLE, title);
+        values.put(COLUMN_WAYPOINT_NOTE, note);
 
-        db.update(TABLE_NAME, values, _ID + "=" + primaryKey, null);
+        db.update(TABLE_NAME_WAYPOINT, values, _ID + "=" + primaryKey, null);
+    }
+
+    public void changeEntryTrack(long primaryKey, String title, String note) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_TRACK_TITLE, title);
+        values.put(COLUMN_TRACK_NOTE, note);
+
+        db.update(TABLE_NAME_TRACK, values, _ID + "=" + primaryKey, null);
     }
 }

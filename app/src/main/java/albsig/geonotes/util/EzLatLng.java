@@ -6,18 +6,18 @@ package albsig.geonotes.util;
 public class EzLatLng {
 
     private double latitude;
-    private double longitute;
+    private double longitude;
 
-    public EzLatLng(double latitude, double longitute) {
+    public EzLatLng(double latitude, double longitude) {
         this.latitude = latitude;
-        this.longitute = longitute;
+        this.longitude = longitude;
     }
 
     public double getLatitude() {
         return latitude;
     }
 
-    public double getLongitute() {
-        return longitute;
+    public double getLongitude() {
+        return longitude;
     }
 }
