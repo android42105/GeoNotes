@@ -79,6 +79,35 @@ public class DBActivity extends AppCompatActivity implements DialogEditFragment.
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(-1, -2);
         params.setMargins(10, 5, 10, 5);
 
+        for(TrackDto currentTrack : this.allEntrysTrack){
+            final TextView trackTextView = new TextView(this);
+            final long primaryKey = currentTrack.getPrimaryKey();
+            final String title = currentTrack.getTitle();
+            final String note = currentTrack.getNote();
+            final String waypoints = currentTrack.getWaypoints();
+            final String time = currentTrack.getTime();
+
+            trackTextView.setText(Html.fromHtml("<b><u>" + title + "</u></b><br/><br/>" + "<i>" + note + "</i>"));
+            trackTextView.setBackgroundResource(R.drawable.db_textview_track_shape);
+
+            trackTextView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    return true;
+                }
+            });
+
+            trackTextView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                }
+            });
+
+            trackTextView.setLayoutParams(params);
+            ll.addView(trackTextView);
+        }
+
         for (WaypointDto currentEntry : this.allEntrysWaypoint) {
 
             final TextView textView = new TextView(this);
@@ -91,8 +120,7 @@ public class DBActivity extends AppCompatActivity implements DialogEditFragment.
             final Double longitude = currentEntry.getLongitude();
 
             textView.setText(Html.fromHtml("<b><u>" + title + "</u></b><br/><br/>" + "<i>" + note + "</i>"));
-            textView.setBackgroundResource(R.drawable.db_textview_shape);
-
+            textView.setBackgroundResource(R.drawable.db_textview_waypoint_shape);
 
             textView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
