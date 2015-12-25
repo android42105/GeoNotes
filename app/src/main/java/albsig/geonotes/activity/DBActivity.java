@@ -124,11 +124,12 @@ public class DBActivity extends AppCompatActivity implements DialogEditFragment.
                 Bundle args = new Bundle();
                 DialogFragment dialogEdit = new DialogEditFragment();
 
+                args.putString("dialogTitle", "Edit Waypoint");
                 args.putLong("primaryKey", primaryKey);
                 args.putString("title", title);
                 args.putString("note", note);
                 dialogEdit.setArguments(args);
-                dialogEdit.show(getSupportFragmentManager(), "dialogEdit");
+                dialogEdit.show(getSupportFragmentManager(), "dialogEditWaypoint");
 
                 return true;
             }
@@ -158,8 +159,10 @@ public class DBActivity extends AppCompatActivity implements DialogEditFragment.
     private TextView configureTrack(TrackDto track) {
 
         final TextView trackTextView = new TextView(this);
+        final long primaryKey = track.getPrimaryKey();
         final String title = track.getTitle();
         final String note = track.getNote();
+        final String time = track.getTime();
 
         trackTextView.setText(Html.fromHtml("<b>" + title + "</b><br/><br/>" + "<i>" + note + "</i>"));
         trackTextView.setBackgroundResource(R.drawable.db_textview_track_shape);
@@ -167,6 +170,17 @@ public class DBActivity extends AppCompatActivity implements DialogEditFragment.
         trackTextView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
+                Bundle args = new Bundle();
+                DialogFragment dialogEdit = new DialogEditFragment();
+
+                args.putString("dialogTitle", "Edit Track");
+                args.putLong("primaryKey", primaryKey);
+                args.putString("title", title);
+                args.putString("note", note);
+
+                dialogEdit.setArguments(args);
+                dialogEdit.show(getSupportFragmentManager(), "dialogEditTrack");
+
                 return true;
             }
         });
@@ -183,16 +197,26 @@ public class DBActivity extends AppCompatActivity implements DialogEditFragment.
 
 
     @Override
-    public void onDialogEditSaveClick(long primaryKey, String title, String note) {
-        this.database.changeEntryWaypoint(primaryKey, title, note);
-        for (WaypointDto pro : this.allEntrysWaypoint) {
-            if (pro.getPrimaryKey() == primaryKey) {
-                pro.setTitle(title);
-                pro.setNote(note);
+    public void onDialogEditSaveClick(long primaryKey, String title, String note, String tag) {
+
+        if (tag.equals("dialogEditWaypoint")) {
+
+            this.database.changeEntryWaypoint(primaryKey, title, note);
+            for (WaypointDto pro : this.allEntrysWaypoint) {
+                if (pro.getPrimaryKey() == primaryKey) {
+                    pro.setTitle(title);
+                    pro.setNote(note);
+                }
             }
+            this.sv.removeAllViews();
+            displayScrollView();
         }
-        this.sv.removeAllViews();
-        displayScrollView();
+
+        if (tag.equals("dialogEditTrack")) {
+            //TODO track save logic
+        }
+
+
     }
 
 
@@ -204,17 +228,26 @@ public class DBActivity extends AppCompatActivity implements DialogEditFragment.
      * @param primaryKey
      */
     @Override
-    public void onDialogEditDeleteClick(long primaryKey) {
-        database.deleteEntryWaypoint(primaryKey);
-        WaypointDto delme = null;
-        for (WaypointDto pro : this.allEntrysWaypoint) {
-            if (pro.getPrimaryKey() == primaryKey) {
-                delme = pro;
+    public void onDialogEditDeleteClick(long primaryKey, String tag) {
+
+        if (tag.equals("dialogEditWaypoint")) {
+            database.deleteEntryWaypoint(primaryKey);
+            WaypointDto delme = null;
+            for (WaypointDto pro : this.allEntrysWaypoint) {
+                if (pro.getPrimaryKey() == primaryKey) {
+                    delme = pro;
+                }
             }
+            allEntrysWaypoint.remove(delme);
+            this.sv.removeAllViews();
+            displayScrollView();
         }
-        allEntrysWaypoint.remove(delme);
-        this.sv.removeAllViews();
-        displayScrollView();
+
+        if (tag.equals("dialogEditTrack")) {
+            //TODO track delete logic
+        }
+
+
     }
 
 

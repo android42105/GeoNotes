@@ -23,14 +23,18 @@ public class DialogEditFragment extends DialogFragment {
     private String note;
 
     public interface DialogEditListener {
-        void onDialogEditSaveClick(long primaryKey, String title, String note);
-        void onDialogEditDeleteClick(long primaryKey);
+        void onDialogEditSaveClick(long primaryKey, String title, String note, String tag);
+        void onDialogEditDeleteClick(long primaryKey, String tag);
     }
 
 
     @Override
     public Dialog onCreateDialog(Bundle saveInstanceState) {
 
+        String dialogEditTitle = getArguments().getString("dialogTitle");
+
+        //this will get data from either a track or waypoint
+        //we can keep it this way as they all the save structure.
         this.primaryKey = getArguments().getLong("primaryKey");
         this.title = getArguments().getString("title");
         this.note = getArguments().getString("note");
@@ -39,7 +43,7 @@ public class DialogEditFragment extends DialogFragment {
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         final LayoutInflater inflater = getActivity().getLayoutInflater();
         final View view = inflater.inflate(R.layout.dialog_edit, null);
-
+        builder.setTitle(dialogEditTitle);
         builder.setView(view);
 
         // getting the Views components.
@@ -66,7 +70,7 @@ public class DialogEditFragment extends DialogFragment {
                     Toast.makeText(getActivity(), "Please fill out Title", Toast.LENGTH_SHORT).show();
                 } else {
                     dismiss();
-                    dialoglistener.onDialogEditSaveClick(primaryKey, dialogTitle.getText().toString(), dialogNote.getText().toString());
+                    dialoglistener.onDialogEditSaveClick(primaryKey, dialogTitle.getText().toString(), dialogNote.getText().toString(), getTag());
                 }
             }
         });
@@ -74,7 +78,7 @@ public class DialogEditFragment extends DialogFragment {
         dialogDeleteButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 getDialog().dismiss();
-                dialoglistener.onDialogEditDeleteClick(primaryKey);
+                dialoglistener.onDialogEditDeleteClick(primaryKey, getTag());
             }
         });
 
