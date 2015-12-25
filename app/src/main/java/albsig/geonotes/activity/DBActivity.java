@@ -72,6 +72,10 @@ public class DBActivity extends AppCompatActivity implements DialogEditFragment.
     }
 
 
+    /**
+     * adds TextViews from Tracks and Waypoints into a Scrollview
+     * to display it on Screen.
+     */
     private void displayScrollView() {
 
         final LinearLayout ll = new LinearLayout(this);
@@ -79,82 +83,104 @@ public class DBActivity extends AppCompatActivity implements DialogEditFragment.
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(-1, -2);
         params.setMargins(10, 5, 10, 5);
 
-        for(TrackDto currentTrack : this.allEntrysTrack){
-            final TextView trackTextView = new TextView(this);
-            final long primaryKey = currentTrack.getPrimaryKey();
-            final String title = currentTrack.getTitle();
-            final String note = currentTrack.getNote();
-            final String waypoints = currentTrack.getWaypoints();
-            final String time = currentTrack.getTime();
+        for (TrackDto track : this.allEntrysTrack) {
 
-            trackTextView.setText(Html.fromHtml("<b><u>" + title + "</u></b><br/><br/>" + "<i>" + note + "</i>"));
-            trackTextView.setBackgroundResource(R.drawable.db_textview_track_shape);
-
-            trackTextView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    return true;
-                }
-            });
-
-            trackTextView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                }
-            });
-
+            TextView trackTextView = configureTrack(track);
             trackTextView.setLayoutParams(params);
             ll.addView(trackTextView);
         }
 
-        for (WaypointDto currentEntry : this.allEntrysWaypoint) {
+        for (WaypointDto waypoint : this.allEntrysWaypoint) {
 
-            final TextView textView = new TextView(this);
-
-            final long primaryKey = currentEntry.getPrimaryKey();
-            final String title = currentEntry.getTitle();
-            final String note = currentEntry.getNote();
-
-            final Double latitude = currentEntry.getLatitude();
-            final Double longitude = currentEntry.getLongitude();
-
-            textView.setText(Html.fromHtml("<b><u>" + title + "</u></b><br/><br/>" + "<i>" + note + "</i>"));
-            textView.setBackgroundResource(R.drawable.db_textview_waypoint_shape);
-
-            textView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    Bundle args = new Bundle();
-                    DialogFragment dialogEdit = new DialogEditFragment();
-
-                    args.putLong("primaryKey", primaryKey);
-                    args.putString("title", title);
-                    args.putString("note", note);
-                    dialogEdit.setArguments(args);
-                    dialogEdit.show(getSupportFragmentManager(), "dialogEdit");
-
-                    return true;
-                }
-            });
-
-            textView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent returnIntent = new Intent();
-                    returnIntent.putExtra("DBActivity.LATITUDE", latitude);
-                    returnIntent.putExtra("DBActivity.LONGITUDE",longitude);
-                    returnIntent.putExtra("DBActivity.TITLE",title);
-                    setResult(DBActivity.RESULT_OK,returnIntent);
-                    finish();
-                }
-            });
-
-            textView.setLayoutParams(params);
-            ll.addView(textView);
+            TextView waypointTextView = configureWaypoint(waypoint);
+            waypointTextView.setLayoutParams(params);
+            ll.addView(waypointTextView);
         }
         this.sv.addView(ll);
     }
+
+
+    /**
+     * configures a Waypoint and its listeners into a TextView.
+     *
+     * @param waypoint
+     * @return the configured TextView which shows a Waypoint.
+     */
+    private TextView configureWaypoint(WaypointDto waypoint) {
+        final TextView waypointTextView = new TextView(this);
+
+        final long primaryKey = waypoint.getPrimaryKey();
+        final String title = waypoint.getTitle();
+        final String note = waypoint.getNote();
+        final Double latitude = waypoint.getLatitude();
+        final Double longitude = waypoint.getLongitude();
+
+        waypointTextView.setText(Html.fromHtml("<b>" + title + "</b><br/><br/>" + "<i>" + note + "</i>"));
+        waypointTextView.setBackgroundResource(R.drawable.db_textview_waypoint_shape);
+
+        waypointTextView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Bundle args = new Bundle();
+                DialogFragment dialogEdit = new DialogEditFragment();
+
+                args.putLong("primaryKey", primaryKey);
+                args.putString("title", title);
+                args.putString("note", note);
+                dialogEdit.setArguments(args);
+                dialogEdit.show(getSupportFragmentManager(), "dialogEdit");
+
+                return true;
+            }
+        });
+
+        waypointTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent returnIntent = new Intent();
+                returnIntent.putExtra("DBActivity.LATITUDE", latitude);
+                returnIntent.putExtra("DBActivity.LONGITUDE", longitude);
+                returnIntent.putExtra("DBActivity.TITLE", title);
+                setResult(DBActivity.RESULT_OK, returnIntent);
+                finish();
+            }
+        });
+
+        return waypointTextView;
+    }
+
+    /**
+     * configures a Track and its listeners into a TextView.
+     *
+     * @param track
+     * @return the configured TextView which shows a Track.
+     */
+    private TextView configureTrack(TrackDto track) {
+
+        final TextView trackTextView = new TextView(this);
+        final String title = track.getTitle();
+        final String note = track.getNote();
+
+        trackTextView.setText(Html.fromHtml("<b>" + title + "</b><br/><br/>" + "<i>" + note + "</i>"));
+        trackTextView.setBackgroundResource(R.drawable.db_textview_track_shape);
+
+        trackTextView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                return true;
+            }
+        });
+
+        trackTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        return trackTextView;
+    }
+
 
     @Override
     public void onDialogEditSaveClick(long primaryKey, String title, String note) {
@@ -190,4 +216,6 @@ public class DBActivity extends AppCompatActivity implements DialogEditFragment.
         this.sv.removeAllViews();
         displayScrollView();
     }
+
+
 }
