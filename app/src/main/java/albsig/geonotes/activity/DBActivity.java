@@ -84,6 +84,12 @@ public class DBActivity extends AppCompatActivity implements DialogEditFragment.
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(-1, -2);
         params.setMargins(10, 5, 10, 5);
 
+        for (WaypointDto waypoint : this.allEntrysWaypoint) {
+
+            TextView waypointTextView = configureWaypoint(waypoint);
+            waypointTextView.setLayoutParams(params);
+            ll.addView(waypointTextView);
+        }
         for (TrackDto track : this.allEntrysTrack) {
 
             TextView trackTextView = configureTrack(track);
@@ -91,12 +97,7 @@ public class DBActivity extends AppCompatActivity implements DialogEditFragment.
             ll.addView(trackTextView);
         }
 
-        for (WaypointDto waypoint : this.allEntrysWaypoint) {
 
-            TextView waypointTextView = configureWaypoint(waypoint);
-            waypointTextView.setLayoutParams(params);
-            ll.addView(waypointTextView);
-        }
         this.sv.addView(ll);
     }
 
