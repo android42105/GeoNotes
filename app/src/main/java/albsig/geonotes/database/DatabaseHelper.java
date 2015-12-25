@@ -159,7 +159,7 @@ public class DatabaseHelper extends SQLiteOpenHelper implements BaseColumns {
         Cursor c = db.rawQuery(query, null);
 
         while (c.moveToNext()) {
-            allEntrys.add(new TrackDto(c.getLong(0), c.getString(1), c.getString(2), c.getString(3), c.getString(4)));
+            allEntrys.add(new TrackDto(c.getLong(0), c.getString(1), c.getString(2), c.getString(3), c.getLong(4)));
         }
         db.close();
         return allEntrys;

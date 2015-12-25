@@ -162,7 +162,7 @@ public class DBActivity extends AppCompatActivity implements DialogEditFragment.
         final long primaryKey = track.getPrimaryKey();
         final String title = track.getTitle();
         final String note = track.getNote();
-        final String time = track.getTime();
+        final long time = track.getTime();
 
         trackTextView.setText(Html.fromHtml("<b>" + title + "<br/>" + time + "</b><br/><br/>" + "<i>" + note + "</i>"));
         trackTextView.setBackgroundResource(R.drawable.db_textview_track_shape);

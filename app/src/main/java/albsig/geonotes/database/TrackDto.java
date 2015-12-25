@@ -9,18 +9,14 @@ public class TrackDto {
     private String title;
     private String note;
     private String waypoints;
-    private String time;
+    private long time;
 
-    public TrackDto(Long primaryKey, String title, String note, String waypoints, String time) {
+    public TrackDto(Long primaryKey, String title, String note, String waypoints, long time) {
         this.primaryKey = primaryKey;
         this.title = title;
         this.note = note;
         this.waypoints = waypoints;
         this.time = time;
-    }
-
-    public void setPrimaryKey(Long primaryKey) {
-        this.primaryKey = primaryKey;
     }
 
     public void setTitle(String title) {
@@ -31,13 +27,6 @@ public class TrackDto {
         this.note = note;
     }
 
-    public void setWaypoints(String waypoints) {
-        this.waypoints = waypoints;
-    }
-
-    public void setTime(String time) {
-        this.time = time;
-    }
 
     public Long getPrimaryKey() {
 
@@ -56,7 +45,7 @@ public class TrackDto {
         return this.waypoints;
     }
 
-    public String getTime() {
+    public long getTime() {
         return this.time;
     }
 }
