@@ -115,7 +115,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         this.map.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude())));
         this.map.setMyLocationEnabled(true);
 
-        this.trackInfo += currentLocation.getLatitude()+","+currentLocation.getLongitude()+";";
+        this.trackInfo += currentLocation.getLatitude() + "," + currentLocation.getLongitude() + ";";
     }
 
     @Override
@@ -204,7 +204,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             database.saveCurrentPosition(title, note, this.currentLocation);
         }
         if (tag.equals("dialogSaveTrack")) {
-            database.saveTrack(title, note, this.trackInfo, String.valueOf(this.time));
+            database.saveTrack(title, note, this.trackInfo, this.time);
         }
     }
 

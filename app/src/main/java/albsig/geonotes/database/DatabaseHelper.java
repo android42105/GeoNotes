@@ -45,7 +45,7 @@ public class DatabaseHelper extends SQLiteOpenHelper implements BaseColumns {
             COLUMN_TRACK_TITLE + " TEXT," +
             COLUMN_TRACK_NOTE + " TEXT," +
             COLUMN_TRACK_TRACKINFO + " TEXT," +
-            COLUMN_TRACK_TIME + " TEXT" +
+            COLUMN_TRACK_TIME + " REAL" +
             " );";
 
     private final String CREATE_TABLE_WAYPOINT = "CREATE TABLE " +
@@ -95,7 +95,7 @@ public class DatabaseHelper extends SQLiteOpenHelper implements BaseColumns {
 
         trackmock.put(COLUMN_TRACK_TITLE, "Albstadt - Sigmaringen");
         trackmock.put(COLUMN_TRACK_NOTE, "Ein Track zum testen");
-        trackmock.put(COLUMN_TRACK_TIME, "15:23 min");
+        trackmock.put(COLUMN_TRACK_TIME, 234443);
         trackmock.put(COLUMN_TRACK_TRACKINFO, "48.205776,9.036642;" +
                 "48.191891,9.064180;" +
                 "48.185367, 9.100229;" +
@@ -112,7 +112,7 @@ public class DatabaseHelper extends SQLiteOpenHelper implements BaseColumns {
      *
      * @return primarykey of the newly added entry
      */
-    public long saveTrack(String title, String note, String trackInfo, String time) {
+    public long saveTrack(String title, String note, String trackInfo, long time) {
 
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
