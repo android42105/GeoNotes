@@ -21,10 +21,11 @@ public class DialogEditFragment extends DialogFragment {
     private long primaryKey;
     private String title;
     private String note;
+    private String kind;
 
     public interface DialogEditListener {
-        void onDialogEditSaveClick(long primaryKey, String title, String note);
-        void onDialogEditDeleteClick(long primaryKey);
+        void onDialogEditSaveClick(long primaryKey, String title, String note, String kind);
+        void onDialogEditDeleteClick(long primaryKey, String kind);
     }
 
 
@@ -34,6 +35,8 @@ public class DialogEditFragment extends DialogFragment {
         this.primaryKey = getArguments().getLong("primaryKey");
         this.title = getArguments().getString("title");
         this.note = getArguments().getString("note");
+        this.kind = getArguments().getString("kind");
+
 
         //creating new builder, setting its view.
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -52,6 +55,7 @@ public class DialogEditFragment extends DialogFragment {
 
         dialogTitle.setText(this.title);
         dialogNote.setText(this.note);
+        final String kind = this.kind;
 
         // following lines create button press logic and notifys listener if its called
         dialogCancelButton.setOnClickListener(new View.OnClickListener() {
@@ -66,7 +70,7 @@ public class DialogEditFragment extends DialogFragment {
                     Toast.makeText(getActivity(), "Please fill out Title", Toast.LENGTH_SHORT).show();
                 } else {
                     dismiss();
-                    dialoglistener.onDialogEditSaveClick(primaryKey, dialogTitle.getText().toString(), dialogNote.getText().toString());
+                    dialoglistener.onDialogEditSaveClick(primaryKey, dialogTitle.getText().toString(), dialogNote.getText().toString(), kind);
                 }
             }
         });
@@ -74,7 +78,7 @@ public class DialogEditFragment extends DialogFragment {
         dialogDeleteButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 getDialog().dismiss();
-                dialoglistener.onDialogEditDeleteClick(primaryKey);
+                dialoglistener.onDialogEditDeleteClick(primaryKey, kind);
             }
         });
 

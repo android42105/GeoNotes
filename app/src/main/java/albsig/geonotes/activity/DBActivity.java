@@ -93,6 +93,16 @@ public class DBActivity extends AppCompatActivity implements DialogEditFragment.
             trackTextView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
+                    Bundle args = new Bundle();
+                    DialogFragment dialogEdit = new DialogEditFragment();
+
+                    args.putLong("primaryKey", primaryKey);
+                    args.putString("title", title);
+                    args.putString("note", note);
+                    args.putString("kind", "T");
+                    dialogEdit.setArguments(args);
+                    dialogEdit.show(getSupportFragmentManager(), "dialogEdit");
+
                     return true;
                 }
             });
@@ -131,6 +141,7 @@ public class DBActivity extends AppCompatActivity implements DialogEditFragment.
                     args.putLong("primaryKey", primaryKey);
                     args.putString("title", title);
                     args.putString("note", note);
+                    args.putString("kind", "WP");
                     dialogEdit.setArguments(args);
                     dialogEdit.show(getSupportFragmentManager(), "dialogEdit");
 
@@ -157,12 +168,22 @@ public class DBActivity extends AppCompatActivity implements DialogEditFragment.
     }
 
     @Override
-    public void onDialogEditSaveClick(long primaryKey, String title, String note) {
-        this.database.changeEntryWaypoint(primaryKey, title, note);
-        for (WaypointDto pro : this.allEntrysWaypoint) {
-            if (pro.getPrimaryKey() == primaryKey) {
-                pro.setTitle(title);
-                pro.setNote(note);
+    public void onDialogEditSaveClick(long primaryKey, String title, String note, String kind) {
+        if(kind == "WP") {
+            this.database.changeEntryWaypoint(primaryKey, title, note);
+            for (WaypointDto pro : this.allEntrysWaypoint) {
+                if (pro.getPrimaryKey() == primaryKey) {
+                    pro.setTitle(title);
+                    pro.setNote(note);
+                }
+            }
+        }else{
+            this.database.changeEntryTrack(primaryKey, title, note);
+            for (TrackDto pro : this.allEntrysTrack) {
+                if (pro.getPrimaryKey() == primaryKey) {
+                    pro.setTitle(title);
+                    pro.setNote(note);
+                }
             }
         }
         this.sv.removeAllViews();
@@ -178,15 +199,26 @@ public class DBActivity extends AppCompatActivity implements DialogEditFragment.
      * @param primaryKey
      */
     @Override
-    public void onDialogEditDeleteClick(long primaryKey) {
-        database.deleteEntryWaypoint(primaryKey);
-        WaypointDto delme = null;
-        for (WaypointDto pro : this.allEntrysWaypoint) {
-            if (pro.getPrimaryKey() == primaryKey) {
-                delme = pro;
+    public void onDialogEditDeleteClick(long primaryKey, String kind) {
+        if(kind == "WP") {
+            database.deleteEntryWaypoint(primaryKey);
+            WaypointDto delme = null;
+            for (WaypointDto pro : this.allEntrysWaypoint) {
+                if (pro.getPrimaryKey() == primaryKey) {
+                    delme = pro;
+                }
             }
+            allEntrysWaypoint.remove(delme);
+        }else{
+            database.deleteEntryTrack(primaryKey);
+            TrackDto delme = null;
+            for (TrackDto pro : this.allEntrysTrack) {
+                if (pro.getPrimaryKey() == primaryKey) {
+                    delme = pro;
+                }
+            }
+            allEntrysTrack.remove(delme);
         }
-        allEntrysWaypoint.remove(delme);
         this.sv.removeAllViews();
         displayScrollView();
     }
