@@ -66,6 +66,7 @@ public class DatabaseHelper extends SQLiteOpenHelper implements BaseColumns {
         Log.d("IN DATABASEHELPER", " onCREATE HAS BEEN CALLED");
         db.execSQL(CREATE_TABLE_TRACK);
         db.execSQL(CREATE_TABLE_WAYPOINT);
+        fillMockData(db);
     }
 
 
@@ -76,16 +77,42 @@ public class DatabaseHelper extends SQLiteOpenHelper implements BaseColumns {
         onCreate(db);
     }
 
+
+    /**
+     * fills the db with mockdata of some tracks and waypoints.
+     * so we dont always have to create new objects for testing.
+     */
+    private void fillMockData(SQLiteDatabase db) {
+
+        final ContentValues waymock = new ContentValues();
+        final ContentValues trackmock = new ContentValues();
+
+        waymock.put(COLUMN_WAYPOINT_TITLE, "Haux Gebäude Albstadt");
+        waymock.put(COLUMN_WAYPOINT_NOTE, "das ist ein testeintrag um funktionen zu testen.");
+        waymock.put(COLUMN_WAYPOINT_LATITUDE, 48.210567);
+        waymock.put(COLUMN_WAYPOINT_LONGITUDE, 9.030785);
+        db.insert(TABLE_NAME_WAYPOINT, "null", waymock);
+
+        trackmock.put(COLUMN_TRACK_TITLE, "Albstadt - Sigmaringen");
+        trackmock.put(COLUMN_TRACK_NOTE, "Ein Track zum testen");
+        trackmock.put(COLUMN_TRACK_TIME, "15:23 min");
+        trackmock.put(COLUMN_TRACK_TRACKINFO, "48.205776,9.036642;" +
+                "48.191891,9.064180;" +
+                "48.185367, 9.100229;" +
+                "48.150011, 9.144584;" +
+                "48.113149, 9.201654;" +
+                "48.090221, 9.205773");
+        db.insert(TABLE_NAME_TRACK, "null", trackmock);
+        //dont close() the db here, onCreate will close it. else error occurs.
+    }
+
+
     /**
      * saves a location with a title and a string in the  current db
      *
-     * @param title
-     * @param note
-     * @param trackInfo
-     * @param time
      * @return primarykey of the newly added entry
      */
-    public long saveTrack(String title, String note,String trackInfo, String time) {
+    public long saveTrack(String title, String note, String trackInfo, String time) {
 
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -93,7 +120,7 @@ public class DatabaseHelper extends SQLiteOpenHelper implements BaseColumns {
         values.put(COLUMN_TRACK_TITLE, title);
         values.put(COLUMN_TRACK_NOTE, note);
 
-        values.put(COLUMN_TRACK_TRACKINFO,trackInfo);
+        values.put(COLUMN_TRACK_TRACKINFO, trackInfo);
         values.put(COLUMN_TRACK_TIME, time);
 
         long primarykey = db.insert(TABLE_NAME_TRACK, "null", values);
@@ -101,7 +128,7 @@ public class DatabaseHelper extends SQLiteOpenHelper implements BaseColumns {
         return primarykey;
     }
 
-    public long saveCurrentPosition(String title, String note,Location location) {
+    public long saveCurrentPosition(String title, String note, Location location) {
 
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -109,12 +136,12 @@ public class DatabaseHelper extends SQLiteOpenHelper implements BaseColumns {
         values.put(COLUMN_WAYPOINT_TITLE, title);
         values.put(COLUMN_WAYPOINT_NOTE, note);
 
-        if(location != null) {
-            values.put(COLUMN_WAYPOINT_LATITUDE,location.getLatitude());
-            values.put(COLUMN_WAYPOINT_LONGITUDE,location.getLongitude());
+        if (location != null) {
+            values.put(COLUMN_WAYPOINT_LATITUDE, location.getLatitude());
+            values.put(COLUMN_WAYPOINT_LONGITUDE, location.getLongitude());
         } else {
-            values.put(COLUMN_WAYPOINT_LATITUDE,48.209280);
-            values.put(COLUMN_WAYPOINT_LONGITUDE,9.032319);
+            values.put(COLUMN_WAYPOINT_LATITUDE, 48.209280);
+            values.put(COLUMN_WAYPOINT_LONGITUDE, 9.032319);
         }
 
         long primarykey = db.insert(TABLE_NAME_WAYPOINT, "null", values);
@@ -132,7 +159,7 @@ public class DatabaseHelper extends SQLiteOpenHelper implements BaseColumns {
         Cursor c = db.rawQuery(query, null);
 
         while (c.moveToNext()) {
-            allEntrys.add(new TrackDto(c.getLong(0), c.getString(1), c.getString(2), c.getString(3),c.getString(4)));
+            allEntrys.add(new TrackDto(c.getLong(0), c.getString(1), c.getString(2), c.getString(3), c.getString(4)));
         }
         db.close();
         return allEntrys;
@@ -147,7 +174,7 @@ public class DatabaseHelper extends SQLiteOpenHelper implements BaseColumns {
         Cursor c = db.rawQuery(query, null);
 
         while (c.moveToNext()) {
-            allEntrys.add(new WaypointDto(c.getLong(0), c.getString(1), c.getString(2), c.getDouble(3),c.getDouble(4)));
+            allEntrys.add(new WaypointDto(c.getLong(0), c.getString(1), c.getString(2), c.getDouble(3), c.getDouble(4)));
         }
         db.close();
         return allEntrys;
