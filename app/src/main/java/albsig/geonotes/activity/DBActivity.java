@@ -200,7 +200,6 @@ public class DBActivity extends AppCompatActivity implements DialogEditFragment.
     public void onDialogEditSaveClick(long primaryKey, String title, String note, String tag) {
 
         if (tag.equals("dialogEditWaypoint")) {
-
             this.database.changeEntryWaypoint(primaryKey, title, note);
             for (WaypointDto pro : this.allEntrysWaypoint) {
                 if (pro.getPrimaryKey() == primaryKey) {
@@ -213,10 +212,16 @@ public class DBActivity extends AppCompatActivity implements DialogEditFragment.
         }
 
         if (tag.equals("dialogEditTrack")) {
-            //TODO track save logic
+            this.database.changeEntryTrack(primaryKey, title, note);
+            for (TrackDto pro : this.allEntrysTrack) {
+                if (pro.getPrimaryKey() == primaryKey) {
+                    pro.setTitle(title);
+                    pro.setNote(note);
+                }
+            }
         }
-
-
+        this.sv.removeAllViews();
+        displayScrollView();
     }
 
 
@@ -244,11 +249,19 @@ public class DBActivity extends AppCompatActivity implements DialogEditFragment.
         }
 
         if (tag.equals("dialogEditTrack")) {
-            //TODO track delete logic
+            database.deleteEntryTrack(primaryKey);
+            TrackDto delme = null;
+            for (TrackDto pro : this.allEntrysTrack) {
+                if (pro.getPrimaryKey() == primaryKey) {
+                    delme = pro;
+                }
+            }
+            allEntrysTrack.remove(delme);
         }
-
-
+        this.sv.removeAllViews();
+        displayScrollView();
     }
-
-
 }
+
+
+
