@@ -95,7 +95,7 @@ public class DatabaseHelper extends SQLiteOpenHelper implements BaseColumns {
 
         trackmock.put(COLUMN_TRACK_TITLE, "Albstadt - Sigmaringen");
         trackmock.put(COLUMN_TRACK_NOTE, "Ein Track zum testen");
-        trackmock.put(COLUMN_TRACK_TIME, 234443);
+        trackmock.put(COLUMN_TRACK_TIME, 930000l);
         trackmock.put(COLUMN_TRACK_TRACKINFO, "48.205776,9.036642;" +
                 "48.191891,9.064180;" +
                 "48.185367, 9.100229;" +

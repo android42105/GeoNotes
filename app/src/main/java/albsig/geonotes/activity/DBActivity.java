@@ -14,6 +14,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.TimeZone;
 
 import albsig.geonotes.R;
 import albsig.geonotes.database.DatabaseHelper;
@@ -164,7 +165,12 @@ public class DBActivity extends AppCompatActivity implements DialogEditFragment.
         final String note = track.getNote();
         final long time = track.getTime();
 
-        trackTextView.setText(Html.fromHtml("<b>" + title + "<br/>" + time + "</b><br/><br/>" + "<i>" + note + "</i>"));
+        final int sec = (int) ((time / 1000) % 60);
+        final int min = (int) ((time / 1000) / 60);
+        //TODO this solution wont show hours. and using such string concentration is slow.
+        //but this works for now
+        trackTextView.setText(Html.fromHtml("<b>" + title + "<br/></b>" + min + " m " + sec +
+                " s<br/><br/>" + "<i>" + note + "</i>"));
         trackTextView.setBackgroundResource(R.drawable.db_textview_track_shape);
 
         trackTextView.setOnLongClickListener(new View.OnLongClickListener() {
