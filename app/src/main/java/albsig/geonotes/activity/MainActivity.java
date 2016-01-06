@@ -3,6 +3,7 @@ package albsig.geonotes.activity;
 
 import android.app.Service;
 import android.content.Intent;
+import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -25,6 +26,9 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
+
+import java.util.ArrayList;
 
 import albsig.geonotes.R;
 import albsig.geonotes.database.DatabaseHelper;
@@ -59,6 +63,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private String trackInfo;
     private long time;
+    private int point;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -227,6 +232,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 } else {
                     String tracks = data.getStringExtra("DBActivity.TRACKSTRING");
                     title = data.getStringExtra("DBActivity.TITLE");
+                    ArrayList<LatLng> arrayPoints = new ArrayList<LatLng>();
+                    PolylineOptions polylineOptions = new PolylineOptions();
+                    polylineOptions.color(Color.BLACK);
+                    polylineOptions.width(5);
 
                     String[] waypoints = tracks.split(";");
                     LatLngBounds.Builder builder = new LatLngBounds.Builder();
@@ -235,12 +244,17 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                         LatLng position = new LatLng(Double.parseDouble(pos[0]), Double.parseDouble(pos[1]));
                         builder.include(position);
+                        arrayPoints.add(position);
 
                         map.addMarker(new MarkerOptions().position(position).title(title));
                     }
+                    polylineOptions.addAll(arrayPoints);
+
+
                     LatLngBounds bounds = builder.build();
                     CameraUpdate camera = CameraUpdateFactory.newLatLngBounds(bounds, 15);
 
+                    map.addPolyline(polylineOptions);
                     map.animateCamera(camera);
                 }
             }
