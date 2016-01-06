@@ -10,6 +10,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -213,14 +214,29 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         if (requestCode == 1) {
             if (resultCode == DBActivity.RESULT_OK) {
-                latitude = data.getDoubleExtra("DBActivity.LATITUDE", 48.209280);
-                longitude = data.getDoubleExtra("DBActivity.LONGITUDE", 9.032319);
-                title = data.getStringExtra("DBActivity.TITLE");
+                if(data.getIntExtra("DBActivity.CHECK",-1) == 0) {
+                    latitude = data.getDoubleExtra("DBActivity.LATITUDE", 48.209280);
+                    longitude = data.getDoubleExtra("DBActivity.LONGITUDE", 9.032319);
+                    title = data.getStringExtra("DBActivity.TITLE");
 
-                LatLng position = new LatLng(latitude, longitude);
-                CameraUpdate camera = CameraUpdateFactory.newLatLngZoom(position, 15);
-                map.addMarker(new MarkerOptions().position(position).title(title));
-                map.animateCamera(camera);
+                    LatLng position = new LatLng(latitude, longitude);
+                    CameraUpdate camera = CameraUpdateFactory.newLatLngZoom(position, 15);
+                    map.addMarker(new MarkerOptions().position(position).title(title));
+                    map.animateCamera(camera);
+                } else {
+                    String tracks = data.getStringExtra("DBActivity.TRACKSTRING");
+                    title = data.getStringExtra("DBActivity.TITLE");
+
+                    String[] waypoints = tracks.split(";");
+                    for(String s : waypoints) {
+                        String[] pos = s.split(",");
+                        LatLng position = new LatLng(Double.parseDouble(pos[0]), Double.parseDouble(pos[1]));
+                        CameraUpdate camera = CameraUpdateFactory.newLatLngZoom(position, 15);
+                        map.addMarker(new MarkerOptions().position(position).title(title));
+                        map.animateCamera(camera);
+                    }
+
+                }
             }
         }
     }

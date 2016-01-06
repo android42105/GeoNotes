@@ -141,6 +141,7 @@ public class DBActivity extends AppCompatActivity implements DialogEditFragment.
             @Override
             public void onClick(View v) {
                 Intent returnIntent = new Intent();
+                returnIntent.putExtra("DBActivity.CHECK", 0);
                 returnIntent.putExtra("DBActivity.LATITUDE", latitude);
                 returnIntent.putExtra("DBActivity.LONGITUDE", longitude);
                 returnIntent.putExtra("DBActivity.TITLE", title);
@@ -164,6 +165,7 @@ public class DBActivity extends AppCompatActivity implements DialogEditFragment.
         final long primaryKey = track.getPrimaryKey();
         final String title = track.getTitle();
         final String note = track.getNote();
+        final String trackString = track.getWaypoints();
         final long time = track.getTime();
 
         final int sec = (int) ((time / 1000) % 60);
@@ -195,7 +197,12 @@ public class DBActivity extends AppCompatActivity implements DialogEditFragment.
         trackTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent returnIntent = new Intent();
+                returnIntent.putExtra("DBActivity.CHECK", 1);
+                returnIntent.putExtra("DBActivity.TRACKSTRING", trackString);
+                returnIntent.putExtra("DBActivity.TITLE", title);
+                setResult(DBActivity.RESULT_OK, returnIntent);
+                finish();
             }
         });
 
