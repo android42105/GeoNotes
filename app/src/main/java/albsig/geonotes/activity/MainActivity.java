@@ -23,6 +23,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import albsig.geonotes.R;
@@ -228,14 +229,19 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     title = data.getStringExtra("DBActivity.TITLE");
 
                     String[] waypoints = tracks.split(";");
+                    LatLngBounds.Builder builder = new LatLngBounds.Builder();
                     for(String s : waypoints) {
                         String[] pos = s.split(",");
-                        LatLng position = new LatLng(Double.parseDouble(pos[0]), Double.parseDouble(pos[1]));
-                        CameraUpdate camera = CameraUpdateFactory.newLatLngZoom(position, 15);
-                        map.addMarker(new MarkerOptions().position(position).title(title));
-                        map.animateCamera(camera);
-                    }
 
+                        LatLng position = new LatLng(Double.parseDouble(pos[0]), Double.parseDouble(pos[1]));
+                        builder.include(position);
+
+                        map.addMarker(new MarkerOptions().position(position).title(title));
+                    }
+                    LatLngBounds bounds = builder.build();
+                    CameraUpdate camera = CameraUpdateFactory.newLatLngBounds(bounds, 15);
+
+                    map.animateCamera(camera);
                 }
             }
         }
