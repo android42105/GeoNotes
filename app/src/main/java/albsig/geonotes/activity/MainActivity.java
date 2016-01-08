@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -59,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     //Location from DBActivity
     private double latitude = 48.209280;
     private double longitude = 9.032319;
-    private String title = "WIN Fakultät";
+    private String title;
 
     private String trackInfo;
     private long time;
@@ -86,6 +87,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         //init the UI elements
         this.buttonTrack = (Button) findViewById(R.id.buttonTrack);
         this.buttonRemoveMarkers = (Button) findViewById(R.id.buttonRemoveMarkers);
+
+        title = getString(R.string.standardWaypointTitle);
     }
 
 
@@ -163,7 +166,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             DialogFragment dialogTrack = new DialogSaveFragment();
             Bundle args = new Bundle();
-            args.putString("title", "Save your latest Track");
+            args.putString("title", getString(R.string.saveTrackTitle));
             dialogTrack.setArguments(args);
             dialogTrack.show(getSupportFragmentManager(), "dialogSaveTrack");
         }
@@ -199,7 +202,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void openSaveDialog(View v) {
         DialogFragment dialogLocation = new DialogSaveFragment();
         Bundle args = new Bundle();
-        args.putString("title", "Save your current Location");
+        args.putString("title", getString(R.string.saveLocationTitle));
         dialogLocation.setArguments(args);
         dialogLocation.show(getSupportFragmentManager(), "dialogSaveLocation");
     }
@@ -208,10 +211,17 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onDialogSaveSaveClick(String title, String note, String tag) {
         //differentiate between incoming save clicks from DialogsaveFragment.
         if (tag.equals("dialogSaveLocation")) {
-            database.saveCurrentPosition(title, note, this.currentLocation);
-        }
-        if (tag.equals("dialogSaveTrack")) {
-            database.saveTrack(title, note, this.trackInfo, this.time);
+            if (this.currentLocation == null) {
+                Toast.makeText(getApplicationContext(), getString(R.string.locationError), Toast.LENGTH_LONG).show();
+            } else {
+                database.saveCurrentPosition(title, note, this.currentLocation);
+            }
+        } else if (tag.equals("dialogSaveTrack")) {
+            if (this.trackInfo == null || this.trackInfo.isEmpty()) {
+                Toast.makeText(getApplicationContext(),getString(R.string.locationError),Toast.LENGTH_LONG).show();
+            } else {
+                database.saveTrack(title, note, this.trackInfo, this.time);
+            }
         }
     }
 
