@@ -14,7 +14,6 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.TimeZone;
 
 import albsig.geonotes.R;
 import albsig.geonotes.database.DatabaseHelper;
