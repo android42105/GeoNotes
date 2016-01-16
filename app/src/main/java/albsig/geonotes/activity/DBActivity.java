@@ -71,6 +71,11 @@ public class DBActivity extends AppCompatActivity implements DialogEditFragment.
         overridePendingTransition(R.anim.pull_in_left, R.anim.push_out_right);
     }
 
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.pull_in_left, R.anim.push_out_right);
+    }
 
     /**
      * adds TextViews from Tracks and Waypoints into a Scrollview
@@ -202,6 +207,7 @@ public class DBActivity extends AppCompatActivity implements DialogEditFragment.
                 returnIntent.putExtra("DBActivity.TITLE", title);
                 setResult(DBActivity.RESULT_OK, returnIntent);
                 finish();
+
             }
         });
 
