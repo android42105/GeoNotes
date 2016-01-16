@@ -140,7 +140,7 @@ public class DBActivity extends AppCompatActivity implements DialogEditFragment.
             @Override
             public void onClick(View v) {
                 Intent returnIntent = new Intent();
-                returnIntent.putExtra("DBActivity.CHECK", 0);
+                returnIntent.putExtra("DBActivity.CHECK", 1);
                 returnIntent.putExtra("DBActivity.LATITUDE", latitude);
                 returnIntent.putExtra("DBActivity.LONGITUDE", longitude);
                 returnIntent.putExtra("DBActivity.TITLE", title);
@@ -197,7 +197,7 @@ public class DBActivity extends AppCompatActivity implements DialogEditFragment.
             @Override
             public void onClick(View v) {
                 Intent returnIntent = new Intent();
-                returnIntent.putExtra("DBActivity.CHECK", 1);
+                returnIntent.putExtra("DBActivity.CHECK", 2);
                 returnIntent.putExtra("DBActivity.TRACKSTRING", trackString);
                 returnIntent.putExtra("DBActivity.TITLE", title);
                 setResult(DBActivity.RESULT_OK, returnIntent);

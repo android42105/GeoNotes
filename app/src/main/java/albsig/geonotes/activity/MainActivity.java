@@ -217,55 +217,60 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         } else if (tag.equals("dialogSaveTrack")) {
             if (this.trackInfo == null || this.trackInfo.isEmpty()) {
-                Toast.makeText(getApplicationContext(),getString(R.string.locationError),Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), getString(R.string.locationError), Toast.LENGTH_LONG).show();
             } else {
                 database.saveTrack(title, note, this.trackInfo, this.time);
             }
         }
     }
 
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        if (requestCode == 1) {
-            if (resultCode == DBActivity.RESULT_OK) {
-                if(data.getIntExtra("DBActivity.CHECK",-1) == 0) {
-                    latitude = data.getDoubleExtra("DBActivity.LATITUDE", 48.209280);
-                    longitude = data.getDoubleExtra("DBActivity.LONGITUDE", 9.032319);
-                    title = data.getStringExtra("DBActivity.TITLE");
+        if (requestCode == 1 && resultCode == DBActivity.RESULT_OK) { // requestCode 1 is DBActivity
 
-                    LatLng position = new LatLng(latitude, longitude);
-                    CameraUpdate camera = CameraUpdateFactory.newLatLngZoom(position, 15);
-                    map.addMarker(new MarkerOptions().position(position).title(title));
-                    map.animateCamera(camera);
-                } else {
-                    String tracks = data.getStringExtra("DBActivity.TRACKSTRING");
-                    title = data.getStringExtra("DBActivity.TITLE");
-                    ArrayList<LatLng> arrayPoints = new ArrayList<LatLng>();
-                    PolylineOptions polylineOptions = new PolylineOptions();
-                    polylineOptions.color(Color.BLACK);
-                    polylineOptions.width(5);
+            if (data.getIntExtra("DBActivity.CHECK", -1) == 1) { // click on Waypoint
 
-                    String[] waypoints = tracks.split(";");
-                    LatLngBounds.Builder builder = new LatLngBounds.Builder();
-                    for(String s : waypoints) {
-                        String[] pos = s.split(",");
+                final double lat = data.getDoubleExtra("DBActivity.LATITUDE", 48.209280);
+                final double lng = data.getDoubleExtra("DBActivity.LONGITUDE", 9.032319);
+                final String title = data.getStringExtra("DBActivity.TITLE");
+                final LatLng position = new LatLng(lat, lng);
 
-                        LatLng position = new LatLng(Double.parseDouble(pos[0]), Double.parseDouble(pos[1]));
-                        builder.include(position);
-                        arrayPoints.add(position);
+                CameraUpdate camera = CameraUpdateFactory.newLatLngZoom(position, 15);
+                map.addMarker(new MarkerOptions().position(position).title(title));
+                map.animateCamera(camera);
+            }
 
-                        map.addMarker(new MarkerOptions().position(position).title(title));
-                    }
-                    polylineOptions.addAll(arrayPoints);
+            if (data.getIntExtra("DBActivity.CHECK", -1) == 2) { // click on Track
 
+                final String tracks = data.getStringExtra("DBActivity.TRACKSTRING");
+                final String[] track = tracks.split(";");
+                final String title = data.getStringExtra("DBActivity.TITLE");
+                final ArrayList<LatLng> arrayPoints = new ArrayList();
+                final PolylineOptions polylineOptions = new PolylineOptions();
 
-                    LatLngBounds bounds = builder.build();
-                    CameraUpdate camera = CameraUpdateFactory.newLatLngBounds(bounds, 15);
-
-                    map.addPolyline(polylineOptions);
-                    map.animateCamera(camera);
+                for (String waypoint : track) {
+                    String[] pos = waypoint.split(",");
+                    LatLng position = new LatLng(Double.parseDouble(pos[0]), Double.parseDouble(pos[1]));
+                    arrayPoints.add(position);
                 }
+                final LatLng firstPoint = arrayPoints.get(0);
+                final LatLng lastPoint = (arrayPoints.get(arrayPoints.size() - 1));
+
+                polylineOptions.addAll(arrayPoints);
+                polylineOptions.color(Color.BLUE);
+                polylineOptions.width(5);
+
+                LatLngBounds.Builder bounds = new LatLngBounds.Builder();
+                bounds.include(firstPoint);
+                bounds.include(lastPoint);
+
+                CameraUpdate camera = CameraUpdateFactory.newLatLngBounds(bounds.build(), 5);
+                map.addMarker(new MarkerOptions().position(firstPoint).title(title));
+                map.addMarker(new MarkerOptions().position(lastPoint).title(title));
+                map.addPolyline(polylineOptions);
+                map.animateCamera(camera);
             }
         }
     }
