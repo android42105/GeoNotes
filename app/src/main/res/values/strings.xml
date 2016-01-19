@@ -16,7 +16,7 @@
     <string name="title">Title</string>
     <string name="titleBold"><b>Title</b></string>
 
-    <string name="locationError">No Location found Save failed</string>
+    <string name="locationError">No Location found ... Save failed</string>
     <string name="saveLocationTitle">Save your current Location</string>
     <string name="saveTrackTitle">Save your latest Track</string>
     <string name="standardWaypointTitle">WIN Factorial</string>

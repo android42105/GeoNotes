@@ -65,7 +65,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private String trackInfo;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -165,11 +164,16 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             this.isTracking = false;
             this.chronoTime.stop();
             stopLocationUpdates();
-            DialogFragment dialogTrack = new DialogSaveFragment();
-            Bundle args = new Bundle();
-            args.putString("title", getString(R.string.saveTrackTitle));
-            dialogTrack.setArguments(args);
-            dialogTrack.show(getSupportFragmentManager(), "dialogSaveTrack");
+
+            if (this.currentLocation == null) {
+                Toast.makeText(this, getString(R.string.locationError), Toast.LENGTH_LONG).show();
+            } else {
+                DialogFragment dialogTrack = new DialogSaveFragment();
+                Bundle args = new Bundle();
+                args.putString("title", getString(R.string.saveTrackTitle));
+                dialogTrack.setArguments(args);
+                dialogTrack.show(getSupportFragmentManager(), "dialogSaveTrack");
+            }
         }
     }
 
@@ -200,27 +204,30 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     public void openSaveDialog(View v) {
-        DialogFragment dialogLocation = new DialogSaveFragment();
-        Bundle args = new Bundle();
-        args.putString("title", getString(R.string.saveLocationTitle));
-        dialogLocation.setArguments(args);
-        dialogLocation.show(getSupportFragmentManager(), "dialogSaveLocation");
+
+        if (this.currentLocation == null) {
+            Toast.makeText(this, getString(R.string.locationError), Toast.LENGTH_LONG).show();
+        } else {
+            DialogFragment dialogLocation = new DialogSaveFragment();
+            Bundle args = new Bundle();
+            args.putString("title", getString(R.string.saveLocationTitle));
+            dialogLocation.setArguments(args);
+            dialogLocation.show(getSupportFragmentManager(), "dialogSaveLocation");
+        }
     }
 
     @Override
     public void onDialogSaveSaveClick(String title, String note, String tag) {
         //differentiate between incoming save clicks from DialogsaveFragment.
         if (tag.equals("dialogSaveLocation")) {
-            if (this.currentLocation == null) {
-                Toast.makeText(getApplicationContext(), getString(R.string.locationError), Toast.LENGTH_LONG).show();
-            } else {
-                database.saveCurrentPosition(title, note, this.currentLocation);
-            }
-        } else if (tag.equals("dialogSaveTrack")) {
+            database.saveCurrentPosition(title, note, this.currentLocation);
+        }
+
+        if (tag.equals("dialogSaveTrack")) {
             if (this.trackInfo == null || this.trackInfo.isEmpty()) {
-                Toast.makeText(getApplicationContext(), getString(R.string.locationError), Toast.LENGTH_LONG).show();
+                Toast.makeText(this, getString(R.string.locationError), Toast.LENGTH_LONG).show();
             } else {
-                database.saveTrack(title, note, this.trackInfo, SystemClock.elapsedRealtime()-this.chronoTime.getBase());
+                database.saveTrack(title, note, this.trackInfo, SystemClock.elapsedRealtime() - this.chronoTime.getBase());
             }
         }
     }
