@@ -17,6 +17,7 @@
     <string name="titleBold"><b>Title</b></string>
 
     <string name="locationError">No Location found ... Save failed</string>
+    <string name="googleError">Can not connect to Google Services. Check into GooglePlay Service or Your connection</string>
     <string name="saveLocationTitle">Save your current Location</string>
     <string name="saveTrackTitle">Save your latest Track</string>
     <string name="standardWaypointTitle">WIN Factorial</string>

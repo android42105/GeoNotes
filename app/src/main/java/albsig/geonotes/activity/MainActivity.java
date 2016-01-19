@@ -1,13 +1,9 @@
 package albsig.geonotes.activity;
 
 
-import android.app.Service;
 import android.content.Intent;
 import android.graphics.Color;
-import android.location.Criteria;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v4.app.DialogFragment;
@@ -20,6 +16,11 @@ import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -38,19 +39,22 @@ import albsig.geonotes.dialogs.DialogSaveFragment;
 import albsig.geonotes.util.EzSwipe;
 
 
-public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, LocationListener, DialogSaveFragment.DialogSaveListener {
+public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener, LocationListener, DialogSaveFragment.DialogSaveListener {
 
-    private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 3000;
-    private static final float UPATE_DISTANCE_IN_METERS = 5;
+    private static final long UPDATE_INTERVAL_IN_MILLIS = 3000;
+    private static final long UPDATE_FASTEST_INTERVAL_IN_MILLIS = 3000;
+    private static final int UPATE_PRIORITY = LocationRequest.PRIORITY_HIGH_ACCURACY;
+
 
     //variable to check if activity is currently tracking.
     private boolean isTracking = false;
 
     private GoogleMap map;
+    private GoogleApiClient googleApi;
 
-    private LocationManager locationManager;
+    private LocationRequest locationRequest;
     private Location currentLocation;
-
     //Database var
     private DatabaseHelper database;
 
@@ -60,8 +64,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     //Location from DBActivity
     private double latitude = 48.209280;
     private double longitude = 9.032319;
-    private String title;
 
+    /**
+     * String to accumulate all locations.
+     */
     private String trackInfo;
 
 
@@ -70,8 +76,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Setting up LocationManager
-        this.locationManager = (LocationManager) this.getSystemService(Service.LOCATION_SERVICE);
 
         // getting mapFragment.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().
@@ -87,7 +91,24 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         this.buttonTrack = (Button) findViewById(R.id.buttonTrack);
         this.chronoTime = (Chronometer) findViewById(R.id.main_chrom);
 
-        title = getString(R.string.standardWaypointTitle);
+        buildGoogleApiClient();
+
+    }
+
+    private void buildGoogleApiClient() {
+        googleApi = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+        createLocationRequest();
+    }
+
+    private void createLocationRequest() {
+        this.locationRequest = new LocationRequest();
+        this.locationRequest.setInterval(UPDATE_INTERVAL_IN_MILLIS);
+        this.locationRequest.setFastestInterval(UPDATE_FASTEST_INTERVAL_IN_MILLIS);
+        this.locationRequest.setPriority(UPATE_PRIORITY);
     }
 
 
@@ -114,7 +135,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onMapReady(GoogleMap googleMap) {
         LatLng position = new LatLng(latitude, longitude);
         CameraUpdate camera = CameraUpdateFactory.newLatLngZoom(position, 15);
-        googleMap.addMarker(new MarkerOptions().position(position).title(title));
+        googleMap.addMarker(new MarkerOptions().position(position).title(getString(R.string.standardWaypointTitle)));
         googleMap.animateCamera(camera);
     }
 
@@ -126,21 +147,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         this.trackInfo += currentLocation.getLatitude() + "," + currentLocation.getLongitude() + ";";
     }
 
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-
-    }
-
-    @Override
-    public void onProviderEnabled(String provider) {
-
-    }
-
-    @Override
-    public void onProviderDisabled(String provider) {
-
-    }
-
 
     /**
      * Starts locating current position with best available provider.
@@ -150,8 +156,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (!isTracking) {
 
             this.trackInfo = String.valueOf("");
-            String provider = locationManager.getBestProvider(new Criteria(), true);
-            this.locationManager.requestLocationUpdates(provider, UPDATE_INTERVAL_IN_MILLISECONDS, UPATE_DISTANCE_IN_METERS, this);
+
+            startLocationUpdates();
             this.buttonTrack.setText(R.string.track_stop);
             this.chronoTime.start();
             this.chronoTime.setBase(SystemClock.elapsedRealtime());
@@ -177,9 +183,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
+    private void startLocationUpdates() {
+        LocationServices.FusedLocationApi.requestLocationUpdates(
+                this.googleApi, this.locationRequest, this);
+    }
+
     private void stopLocationUpdates() {
-        //noinspection ResourceType
-        locationManager.removeUpdates(this);
+        LocationServices.FusedLocationApi.removeLocationUpdates(
+                googleApi, this);
     }
 
     @Override
@@ -286,5 +297,35 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void removeMarkers(View v) {
         map.clear();
     }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        Toast.makeText(this, getString(R.string.googleError), Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        googleApi.connect();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (googleApi.isConnected()) {
+            googleApi.disconnect();
+        }
+    }
+
 }
 
