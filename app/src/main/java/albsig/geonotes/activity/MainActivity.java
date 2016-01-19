@@ -9,6 +9,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -16,6 +17,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Chronometer;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -54,16 +56,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     //Elements in UserInterface
     private Button buttonTrack;
-    private Button buttonRemoveMarkers;
-
+    private Chronometer chronoTime;
     //Location from DBActivity
     private double latitude = 48.209280;
     private double longitude = 9.032319;
     private String title;
 
     private String trackInfo;
-    private long time;
-    private int point;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,7 +86,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         //init the UI elements
         this.buttonTrack = (Button) findViewById(R.id.buttonTrack);
-        this.buttonRemoveMarkers = (Button) findViewById(R.id.buttonRemoveMarkers);
+        this.chronoTime = (Chronometer) findViewById(R.id.main_chrom);
 
         title = getString(R.string.standardWaypointTitle);
     }
@@ -123,7 +124,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         this.currentLocation = location;
         this.map.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude())));
         this.map.setMyLocationEnabled(true);
-
         this.trackInfo += currentLocation.getLatitude() + "," + currentLocation.getLongitude() + ";";
     }
 
@@ -149,20 +149,22 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @SuppressWarnings("ResourceType")
     public void startTracking(View v) {
         if (!isTracking) {
-            time = System.currentTimeMillis();
+
             this.trackInfo = String.valueOf("");
             String provider = locationManager.getBestProvider(new Criteria(), true);
             this.locationManager.requestLocationUpdates(provider, UPDATE_INTERVAL_IN_MILLISECONDS, UPATE_DISTANCE_IN_METERS, this);
             this.buttonTrack.setText(R.string.track_stop);
+            this.chronoTime.start();
+            this.chronoTime.setBase(SystemClock.elapsedRealtime());
             this.isTracking = true;
 
+
         } else if (isTracking) {
-            this.time = System.currentTimeMillis() - this.time;
 
             this.buttonTrack.setText(R.string.track_start);
             this.isTracking = false;
+            this.chronoTime.stop();
             stopLocationUpdates();
-
             DialogFragment dialogTrack = new DialogSaveFragment();
             Bundle args = new Bundle();
             args.putString("title", getString(R.string.saveTrackTitle));
@@ -170,7 +172,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             dialogTrack.show(getSupportFragmentManager(), "dialogSaveTrack");
         }
     }
-
 
     private void stopLocationUpdates() {
         //noinspection ResourceType
@@ -219,7 +220,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             if (this.trackInfo == null || this.trackInfo.isEmpty()) {
                 Toast.makeText(getApplicationContext(), getString(R.string.locationError), Toast.LENGTH_LONG).show();
             } else {
-                database.saveTrack(title, note, this.trackInfo, this.time);
+                database.saveTrack(title, note, this.trackInfo, SystemClock.elapsedRealtime()-this.chronoTime.getBase());
             }
         }
     }
