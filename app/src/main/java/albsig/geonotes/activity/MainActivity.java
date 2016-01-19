@@ -117,7 +117,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
-
     }
 
     @Override
@@ -156,19 +155,19 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (!isTracking) {
 
             this.trackInfo = String.valueOf("");
-
-            startLocationUpdates();
             this.buttonTrack.setText(R.string.track_stop);
             this.chronoTime.start();
             this.chronoTime.setBase(SystemClock.elapsedRealtime());
             this.isTracking = true;
 
+            startLocationUpdates();
 
         } else if (isTracking) {
 
             this.buttonTrack.setText(R.string.track_start);
             this.isTracking = false;
             this.chronoTime.stop();
+
             stopLocationUpdates();
 
             if (this.currentLocation == null) {
@@ -235,11 +234,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
         if (tag.equals("dialogSaveTrack")) {
-            if (this.trackInfo == null || this.trackInfo.isEmpty()) {
-                Toast.makeText(this, getString(R.string.locationError), Toast.LENGTH_LONG).show();
-            } else {
-                database.saveTrack(title, note, this.trackInfo, SystemClock.elapsedRealtime() - this.chronoTime.getBase());
-            }
+            database.saveTrack(title, note, this.trackInfo, SystemClock.elapsedRealtime() - this.chronoTime.getBase());
         }
     }
 
