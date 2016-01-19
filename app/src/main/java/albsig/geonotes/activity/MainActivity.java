@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Parcel;
 import android.os.SystemClock;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
@@ -71,6 +72,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private String trackInfo;
 
 
+    private ArrayList<MarkerOptions> savedMarkers = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -112,6 +115,21 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
 
+    @Override //saves map data in Bundle
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        savedInstanceState.putParcelableArrayList("markers", this.savedMarkers);
+    }
+
+    @Override //restores markers
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        this.savedMarkers = savedInstanceState.getParcelableArrayList("markers");
+
+        for (MarkerOptions marker : savedMarkers) {
+            this.map.addMarker(marker);
+        }
+    }
+
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -145,7 +163,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         this.map.setMyLocationEnabled(true);
         this.trackInfo += currentLocation.getLatitude() + "," + currentLocation.getLongitude() + ";";
     }
-
 
     /**
      * Starts locating current position with best available provider.
@@ -252,7 +269,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 final LatLng position = new LatLng(lat, lng);
 
                 CameraUpdate camera = CameraUpdateFactory.newLatLngZoom(position, 15);
-                map.addMarker(new MarkerOptions().position(position).title(title));
+
+                final MarkerOptions markOps = new MarkerOptions();
+                markOps.position(position);
+                markOps.title(title);
+                this.savedMarkers.add(markOps); //add markers to restore it later
+                map.addMarker(markOps);
                 map.animateCamera(camera);
             }
 
