@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
-import android.os.Parcel;
 import android.os.SystemClock;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
@@ -71,8 +70,21 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
      */
     private String trackInfo;
 
-
+    /**
+     * saves all markers on the maps to recover on rotation.
+     */
     private ArrayList<MarkerOptions> savedMarkers = new ArrayList<>();
+    /**
+     * saves all polyoptions, the lines between tracks. 'linked' to savedpolyMarks
+     */
+    private ArrayList<PolylineOptions> savedPolyOps = new ArrayList<>();
+    /**
+     * saves the first and last point of a line. the first two elements of
+     * savedPolymarks belong to the first savedPolyOps. 3&4 belong to 2, and so on.
+     * not the best solution, but a workaround to save alot of code due to Parcelbility...
+     */
+    private ArrayList<MarkerOptions> savedPolyMarks = new ArrayList<>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,16 +129,36 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override //saves map data in Bundle
     public void onSaveInstanceState(Bundle savedInstanceState) {
-        savedInstanceState.putParcelableArrayList("markers", this.savedMarkers);
+        super.onSaveInstanceState(savedInstanceState);
+        savedInstanceState.putParcelableArrayList("waypoints", this.savedMarkers);
+        savedInstanceState.putParcelableArrayList("polyOps", this.savedPolyOps);
+        savedInstanceState.putParcelableArrayList("polyMarks", this.savedPolyMarks);
     }
 
-    @Override //restores markers
+    @Override //restores the maps
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        this.savedMarkers = savedInstanceState.getParcelableArrayList("markers");
+        this.savedMarkers = savedInstanceState.getParcelableArrayList("waypoints");
+        this.savedPolyMarks = savedInstanceState.getParcelableArrayList("polyMarks");
+        this.savedPolyOps = savedInstanceState.getParcelableArrayList("polyOps");
 
-        for (MarkerOptions marker : savedMarkers) {
-            this.map.addMarker(marker);
+
+        if (this.savedMarkers != null && !this.savedMarkers.isEmpty()) {
+            for (MarkerOptions marker : savedMarkers) {
+                this.map.addMarker(marker);
+            }
         }
+
+        if (this.savedPolyOps != null && !this.savedPolyOps.isEmpty() &&
+                this.savedPolyMarks != null && !this.savedPolyMarks.isEmpty()) {
+            int markerindex = 0;
+            for (PolylineOptions line : savedPolyOps) {
+                this.map.addPolyline(line);
+                this.map.addMarker(this.savedPolyMarks.get(markerindex));
+                this.map.addMarker(this.savedPolyMarks.get(markerindex + 1));
+                markerindex = markerindex + 2;
+            }
+        }
+
     }
 
 
@@ -298,13 +330,24 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 polylineOptions.color(Color.BLUE);
                 polylineOptions.width(5);
 
+                this.savedPolyOps.add(polylineOptions);
+
+
                 LatLngBounds.Builder bounds = new LatLngBounds.Builder();
                 bounds.include(firstPoint);
                 bounds.include(lastPoint);
 
                 CameraUpdate camera = CameraUpdateFactory.newLatLngBounds(bounds.build(), 5);
-                map.addMarker(new MarkerOptions().position(firstPoint).title(title));
-                map.addMarker(new MarkerOptions().position(lastPoint).title(title));
+
+                MarkerOptions firstTrackPoint = new MarkerOptions();
+                MarkerOptions lastTrackPoint = new MarkerOptions();
+                firstTrackPoint.position(firstPoint).title(title);
+                lastTrackPoint.position(lastPoint).title(title);
+                this.savedPolyMarks.add(firstTrackPoint);
+                this.savedPolyMarks.add(lastTrackPoint);
+
+                map.addMarker(firstTrackPoint);
+                map.addMarker(lastTrackPoint);
                 map.addPolyline(polylineOptions);
                 map.animateCamera(camera);
             }
