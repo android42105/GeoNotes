@@ -27,17 +27,17 @@ public class EzSwipe {
             case MotionEvent.ACTION_DOWN:
                 x1 = event.getX();
                 break;
+
             case MotionEvent.ACTION_UP:
                 x2 = event.getX();
 
                 if (x1 - x2 > MIN_DISTANCE) {
                     result = SWIPE_RIGHT_TO_LEFT;
-                    break;
                 }
                 if (x2 - x1 > MIN_DISTANCE) {
                     result = SWIPE_LEFT_TO_RIGHT;
-                    break;
                 }
+
                 break;
         }
 

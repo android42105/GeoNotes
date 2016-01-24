@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -20,6 +21,7 @@ import albsig.geonotes.database.DatabaseHelper;
 import albsig.geonotes.database.TrackDto;
 import albsig.geonotes.database.WaypointDto;
 import albsig.geonotes.dialogs.DialogEditFragment;
+import albsig.geonotes.util.EzSwipe;
 
 public class DBActivity extends AppCompatActivity implements DialogEditFragment.DialogEditListener {
 
@@ -99,8 +101,8 @@ public class DBActivity extends AppCompatActivity implements DialogEditFragment.
             TextView trackTextView = configureTrack(track);
             trackTextView.setLayoutParams(params);
             ll.addView(trackTextView);
-        }
 
+        }
 
         this.sv.addView(ll);
     }
@@ -123,7 +125,6 @@ public class DBActivity extends AppCompatActivity implements DialogEditFragment.
 
         waypointTextView.setText(Html.fromHtml("<b>" + title + "</b><br/><br/>" + "<i>" + note + "</i>"));
         waypointTextView.setBackgroundResource(R.drawable.db_textview_waypoint_shape);
-
         waypointTextView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
@@ -144,6 +145,7 @@ public class DBActivity extends AppCompatActivity implements DialogEditFragment.
         waypointTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 Intent returnIntent = new Intent();
                 returnIntent.putExtra("DBActivity.CHECK", 1);
                 returnIntent.putExtra("DBActivity.LATITUDE", latitude);
@@ -153,7 +155,6 @@ public class DBActivity extends AppCompatActivity implements DialogEditFragment.
                 finish();
             }
         });
-
         return waypointTextView;
     }
 
@@ -199,6 +200,7 @@ public class DBActivity extends AppCompatActivity implements DialogEditFragment.
         });
 
         trackTextView.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
                 Intent returnIntent = new Intent();
@@ -226,8 +228,6 @@ public class DBActivity extends AppCompatActivity implements DialogEditFragment.
                     pro.setNote(note);
                 }
             }
-            this.sv.removeAllViews();
-            displayScrollView();
         }
 
         if (tag.equals("dialogEditTrack")) {
@@ -239,8 +239,10 @@ public class DBActivity extends AppCompatActivity implements DialogEditFragment.
                 }
             }
         }
+
         this.sv.removeAllViews();
         displayScrollView();
+
     }
 
 
@@ -280,7 +282,20 @@ public class DBActivity extends AppCompatActivity implements DialogEditFragment.
         this.sv.removeAllViews();
         displayScrollView();
     }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        switch (EzSwipe.getAction(event)) {
+
+            case EzSwipe.SWIPE_LEFT_TO_RIGHT:
+                onBackPressed();
+                return super.onTouchEvent(event);
+        }
+        return super.onTouchEvent(event);
+    }
 }
+
+
 
 
 
