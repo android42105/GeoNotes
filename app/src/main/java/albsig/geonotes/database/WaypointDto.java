@@ -19,24 +19,12 @@ public class WaypointDto {
         this.longitude = longitude;
     }
 
-    public void setPrimaryKey(Long primaryKey) {
-        this.primaryKey = primaryKey;
-    }
-
     public void setTitle(String title) {
         this.title = title;
     }
 
     public void setNote(String note) {
         this.note = note;
-    }
-
-    public void setLatitude(Double latitude) {
-        this.latitude = latitude;
-    }
-
-    public void setLongitude(Double longitude) {
-        this.longitude = longitude;
     }
 
     public Long getPrimaryKey() {

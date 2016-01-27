@@ -1,6 +1,5 @@
 package albsig.geonotes.activity;
 
-
 import android.content.Intent;
 import android.graphics.Color;
 import android.location.Location;
@@ -43,8 +42,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         GoogleApiClient.OnConnectionFailedListener, LocationListener, DialogSaveFragment.DialogSaveListener {
 
     private static final long UPDATE_INTERVAL_IN_MILLIS = 3000;
-    private static final long UPDATE_FASTEST_INTERVAL_IN_MILLIS = 3000;
-    private static final int UPATE_PRIORITY = LocationRequest.PRIORITY_HIGH_ACCURACY;
+    private static final long UPDATE_FASTEST_INTERVAL_IN_MILLIS = 5000;
+    private static final int UPDATE_PRIORITY = LocationRequest.PRIORITY_HIGH_ACCURACY;
 
 
     //variable to check if activity is currently tracking.
@@ -61,6 +60,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     //Elements in UserInterface
     private Button buttonTrack;
     private Chronometer chronoTime;
+
+    private long timeStopped;
     //Location from DBActivity
     private double latitude = 48.209280;
     private double longitude = 9.032319;
@@ -123,7 +124,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         this.locationRequest = new LocationRequest();
         this.locationRequest.setInterval(UPDATE_INTERVAL_IN_MILLIS);
         this.locationRequest.setFastestInterval(UPDATE_FASTEST_INTERVAL_IN_MILLIS);
-        this.locationRequest.setPriority(UPATE_PRIORITY);
+        this.locationRequest.setPriority(UPDATE_PRIORITY);
     }
 
 
@@ -215,6 +216,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             this.buttonTrack.setText(R.string.track_start);
             this.isTracking = false;
+            this.timeStopped = SystemClock.elapsedRealtime() - this.chronoTime.getBase();
             this.chronoTime.stop();
 
             stopLocationUpdates();
@@ -262,6 +264,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
     }
 
+
+    public void removeMarkers(View v) {
+        this.map.clear();
+        this.savedMarkers.clear();
+        this.savedPolyMarks.clear();
+        this.savedPolyOps.clear();
+    }
+
     public void openSaveDialog(View v) {
 
         if (this.currentLocation == null) {
@@ -283,10 +293,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
         if (tag.equals("dialogSaveTrack")) {
-            database.saveTrack(title, note, this.trackInfo, SystemClock.elapsedRealtime() - this.chronoTime.getBase());
+            database.saveTrack(title, note, this.trackInfo, this.timeStopped);
         }
     }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -332,7 +341,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                 this.savedPolyOps.add(polylineOptions);
 
-
                 LatLngBounds.Builder bounds = new LatLngBounds.Builder();
                 bounds.include(firstPoint);
                 bounds.include(lastPoint);
@@ -354,9 +362,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-    public void removeMarkers(View v) {
-        map.clear();
-    }
 
     @Override
     public void onConnected(Bundle bundle) {
