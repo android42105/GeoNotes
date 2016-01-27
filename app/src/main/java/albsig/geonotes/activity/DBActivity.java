@@ -60,6 +60,8 @@ public class DBActivity extends AppCompatActivity implements DialogEditFragment.
                 onBackPressed();
                 return true;
             case R.id.action_settings:
+                Intent settings = new Intent(this, SettingActivity.class);
+                startActivity(settings);
                 return true;
         }
         return super.onOptionsItemSelected(item);

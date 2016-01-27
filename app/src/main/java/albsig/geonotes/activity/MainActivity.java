@@ -1,10 +1,12 @@
 package albsig.geonotes.activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -41,10 +43,10 @@ import albsig.geonotes.util.EzSwipe;
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener, DialogSaveFragment.DialogSaveListener {
 
-    private static final long UPDATE_INTERVAL_IN_MILLIS = 3000;
+
     private static final long UPDATE_FASTEST_INTERVAL_IN_MILLIS = 5000;
     private static final int UPDATE_PRIORITY = LocationRequest.PRIORITY_HIGH_ACCURACY;
-
+    private static long UPDATE_INTERVAL_IN_MILLIS;
 
     //variable to check if activity is currently tracking.
     private boolean isTracking = false;
@@ -92,6 +94,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+        UPDATE_INTERVAL_IN_MILLIS = settings.getLong("updateInterval", 3000);
 
         // getting mapFragment.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().
@@ -162,7 +166,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -175,6 +178,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         int id = item.getItemId();
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Intent settings = new Intent(this, SettingActivity.class);
+            startActivity(settings);
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -209,8 +214,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             this.chronoTime.start();
             this.chronoTime.setBase(SystemClock.elapsedRealtime());
             this.isTracking = true;
-
+            Toast.makeText(this,"Update Interval: "+ UPDATE_INTERVAL_IN_MILLIS/1000+" sec", Toast.LENGTH_SHORT).show();
             startLocationUpdates();
+
 
         } else if (isTracking) {
 
@@ -381,6 +387,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     protected void onStart() {
         super.onStart();
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+        UPDATE_INTERVAL_IN_MILLIS = settings.getLong("updateInterval", 3000);
         googleApi.connect();
     }
 

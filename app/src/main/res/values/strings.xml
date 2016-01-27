@@ -21,6 +21,7 @@
     <string name="saveLocationTitle">Save your current Location</string>
     <string name="saveTrackTitle">Save your latest Track</string>
     <string name="standardWaypointTitle">WIN Factorial</string>
+    <string name="settingUpdateInterval">Update interval in seconds</string>
 
 
 </resources>
